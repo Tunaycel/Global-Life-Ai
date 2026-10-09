@@ -28,9 +28,11 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+          cache: npm
+          cache-dependency-path: scripts/team-report/package-lock.json
       - name: Install the mailer
         working-directory: scripts/team-report
-        run: npm install --no-save --no-package-lock nodemailer@6
+        run: npm ci --prefix . --no-audit --no-fund
       - name: Build and send
         working-directory: scripts/team-report
         env:
