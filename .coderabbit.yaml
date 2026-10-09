@@ -2,7 +2,9 @@
 language: en-US
 reviews:
   profile: assertive
-  request_changes_workflow: false
+  # CodeRabbit is the first check on every PR: failing "error" checks request changes,
+  # and the team lead does the second review.
+  request_changes_workflow: true
   high_level_summary: true
   review_status: true
   poem: false
@@ -10,6 +12,46 @@ reviews:
   auto_review:
     enabled: true
     drafts: true
+  pre_merge_checks:
+    override_requested_reviewers_only: true
+    title:
+      mode: warning
+      requirements: "A short English sentence in the imperative that says what the PR changes, under 72 characters."
+    description:
+      mode: error
+    issue_assessment:
+      mode: error
+    custom_checks:
+      - name: Acceptance criteria met
+        mode: error
+        instructions: |
+          Find the issue this PR closes ("Closes #N" in the description). List every acceptance
+          criterion from that issue. For each one, state pass or fail with the file and line that
+          implements it. Pass only if every criterion is implemented by this PR's diff, or the PR
+          description explains why a criterion does not apply. Fail if no issue is linked.
+      - name: Scope matches the issue
+        mode: warning
+        instructions: |
+          Fail if the diff changes behaviour or files unrelated to the goal of the linked issue,
+          for example refactors, dependency bumps or styling changes the issue did not ask for.
+          Name each unrelated change.
+      - name: Sourced visa facts
+        mode: error
+        instructions: |
+          Fail if the diff adds or changes a user-facing visa rule, requirement, fee, duration,
+          processing time or language level without an official government or embassy source URL
+          next to it (a sourceUrl field, a link in the same data entry, or a link rendered with it).
+      - name: No secrets or personal data
+        mode: error
+        instructions: |
+          Fail if the diff contains API keys, tokens, passwords, client secrets, private keys,
+          .env values, or personal data such as passport numbers, real names with documents,
+          addresses or phone numbers.
+      - name: Screenshots for UI changes
+        mode: warning
+        instructions: |
+          If the diff changes anything rendered on screen (files under src/app or src/components,
+          or styles), pass only if the PR description contains at least one image. Otherwise pass.
   path_instructions:
     - path: "src/**"
       instructions: |

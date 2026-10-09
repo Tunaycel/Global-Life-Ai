@@ -31,11 +31,17 @@ Issue → branch → commits → local checks + two reviews → push → draft P
       Push only when both come back clean.
    5. Open the changed screens in the browser and check them yourself.
 5. **Open the PR as a draft**, fill in the template, link the issue with `Closes #N`.
-   CodeRabbit reviews every push automatically. Fix what it finds or reply with the reason
-   it does not apply; its comments are review threads, so they must be resolved before merging.
-   When CI is green, CodeRabbit's threads are resolved and the checklist is done, mark it
+   Two automatic checks run on every push:
+   - **Task gate** (required CI check): branch name, `Closes #N` to an open issue assigned to
+     you, and every checklist item ticked.
+   - **First check, AI team lead (CodeRabbit):** code review plus pre-merge checks — the
+     linked issue's acceptance criteria are all met, the scope matches the issue, visa facts
+     have official sources, no secrets or personal data, screenshots for UI changes. A failing
+     check requests changes. Fix what it finds or reply with the reason it does not apply; its
+     comments are review threads, so they must be resolved before merging.
+   When CI and the Task gate are green and CodeRabbit's threads are resolved, mark it
    *Ready for review*.
-6. **Review.** The owner is the team lead and the only code owner. CODEOWNERS requests the
+6. **Second check, team lead review.** The owner is the team lead and the only code owner. CODEOWNERS requests the
    owner's review automatically on every PR the owner did not open:
    - *Approve* – it can be merged.
    - *Request changes* – push fixes to the same branch. A new push dismisses the old approval,
