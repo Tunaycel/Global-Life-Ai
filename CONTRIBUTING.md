@@ -1,6 +1,6 @@
 # Contributing
 
-Two people work on this repo. These rules are enforced by a branch ruleset on `master`;
+Two people work on this repo. These rules are enforced by branch rulesets on `master`;
 they are not suggestions.
 
 ## The flow
@@ -35,29 +35,31 @@ Issue → branch → commits → local checks + two reviews → push → draft P
    it does not apply; its comments are review threads, so they must be resolved before merging.
    When CI is green, CodeRabbit's threads are resolved and the checklist is done, mark it
    *Ready for review*.
-6. **Review.** Both of us are code owners, and nobody can approve their own PR, so the
-   collaborator's PRs need the owner's approval and the owner's PRs need the collaborator's
-   (CODEOWNERS requests it automatically):
+6. **Review.** The owner is the team lead and the only code owner. CODEOWNERS requests the
+   owner's review automatically on every PR the owner did not open:
    - *Approve* – it can be merged.
    - *Request changes* – push fixes to the same branch. A new push dismisses the old approval,
      so the PR needs a fresh approval.
    - Every review conversation must be resolved before merging.
-7. **Merge** is squash only, done by the owner, after approval and green CI.
+7. **Merge** is squash only, done by the owner, after approval (owner's own PRs: the owner's
+   merge is the approval) and green CI.
    The branch is deleted automatically and the issue closes through `Closes #N`.
 
-## What the ruleset enforces on `master`
+## What the rulesets enforce on `master`
 
-- No direct pushes, no force pushes, no deleting the branch.
-- Changes land only through a pull request.
-Two rulesets, so the owner's merge right does not switch off the review rules:
+Three rulesets, so the owner's rights never switch off CI or the PR flow:
 
 - **Protect master** (no bypass, applies to everyone, the owner included):
   no direct pushes, no force pushes, no deleting the branch; changes land only through a PR;
-  one code-owner approval on the latest push, stale approvals dismissed; all review threads
-  resolved; CI (`Typecheck and build`, from GitHub Actions) green on a branch up to date with
-  `master`; squash merge only.
+  all review threads resolved; CI (`Typecheck and build`, from GitHub Actions) green on a
+  branch up to date with `master`; squash merge only.
+- **Owner approval**: one code-owner approval on the latest push, stale approvals dismissed.
+  GitHub does not let anyone approve their own PR, so the admin can bypass this rule
+  (through a PR only). Technically that works on any PR; by agreement the owner uses it only
+  on their own PRs and approves everyone else's before merging.
 - **Only the owner merges**: nobody can update `master` except the repository admin,
-  and the admin only through a pull request.
+  and the admin only through a pull request. Merging a PR counts as an update, so a
+  collaborator can never merge, even with an approval.
 
 ## Content rules
 
