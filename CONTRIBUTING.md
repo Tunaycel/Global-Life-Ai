@@ -32,13 +32,16 @@ Issue → branch → commits → local checks + two reviews → push → draft P
    5. Open the changed screens in the browser and check them yourself.
 5. **Open the PR as a draft**, fill in the template, link the issue with `Closes #N`.
    Two automatic checks run on every push:
-   - **Task gate** (required CI check): branch name, `Closes #N` to an open issue assigned to
-     you, and every checklist item ticked.
+   - **Task gate** (required CI check): branch name starting with your username,
+     `Closes #N` to an open issue assigned to you, and every item of the template checklist
+     ticked (tick items that do not apply and say why in the description). It re-runs on
+     pushes and description edits; after fixing an assignment, edit the description or re-run it.
    - **First check, AI team lead (CodeRabbit):** code review plus pre-merge checks — the
      linked issue's acceptance criteria are all met, the scope matches the issue, visa facts
      have official sources, no secrets or personal data, screenshots for UI changes. A failing
-     check requests changes. Fix what it finds or reply with the reason it does not apply; its
-     comments are review threads, so they must be resolved before merging.
+     check, or any comment it wants acted on, requests changes. Fix what it finds or reply with
+     the reason it does not apply; its comments are review threads, so they must be resolved
+     before merging. Only a requested reviewer (the team lead) can override a failed check.
    When CI and the Task gate are green and CodeRabbit's threads are resolved, mark it
    *Ready for review*.
 6. **Second check, team lead review.** The owner is the team lead and the only code owner. CODEOWNERS requests the
@@ -57,8 +60,8 @@ Three rulesets, so the owner's rights never switch off CI or the PR flow:
 
 - **Protect master** (no bypass, applies to everyone, the owner included):
   no direct pushes, no force pushes, no deleting the branch; changes land only through a PR;
-  all review threads resolved; CI (`Typecheck and build`, from GitHub Actions) green on a
-  branch up to date with `master`; squash merge only.
+  all review threads resolved; CI (`Typecheck and build` and `Task gate`, from GitHub
+  Actions) green on a branch up to date with `master`; squash merge only.
 - **Owner approval**: one code-owner approval on the latest push, stale approvals dismissed.
   GitHub does not let anyone approve their own PR, so the admin can bypass this rule
   (through a PR only). Technically that works on any PR; by agreement the owner uses it only

@@ -2,7 +2,7 @@ name: Task gate
 
 on:
   pull_request:
-    types: [opened, edited, synchronize, reopened, ready_for_review, assigned, unassigned]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -26,16 +26,25 @@ jobs:
             const { data: pr } = await github.rest.pulls.get({
               owner, repo, pull_number: context.payload.pull_request.number,
             });
+            if (pr.user.type === "Bot") {
+              await core.summary.addRaw(`Task gate skipped for bot @${pr.user.login}.`).write();
+              return;
+            }
             const author = pr.user.login.toLowerCase();
-            const body = pr.body ?? "";
+            // Hidden text is not part of the description a reviewer reads.
+            const body = (pr.body ?? "").replace(/<!--[\s\S]*?-->/g, "");
             const problems = [];
 
             const branch = pr.head.ref.match(/^([A-Za-z0-9-]+)\/(\d+)-[a-z0-9-]+$/);
             if (!branch) {
-              problems.push(`Branch \`${pr.head.ref}\` must be \`<user>/<issue-number>-<short-name>\`.`);
+              problems.push(`Branch \`${pr.head.ref}\` must be \`<user>/<issue-number>-<short-name>\` (short name: lowercase letters, digits, hyphens).`);
+            } else if (branch[1].toLowerCase() !== author) {
+              problems.push(`Branch \`${pr.head.ref}\` starts with \`${branch[1]}\`, not your username \`${pr.user.login}\`.`);
             }
 
-            const closes = [...body.matchAll(/\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\b/gi)].map((m) => Number(m[1]));
+            const closes = [...new Set(
+              [...body.matchAll(/\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?):?\s+#(\d+)\b/gi)].map((m) => Number(m[1])),
+            )];
             if (closes.length === 0) {
               problems.push("The description must link its issue with `Closes #N`.");
             } else if (branch && !closes.includes(Number(branch[2]))) {
@@ -46,7 +55,8 @@ jobs:
               let issue;
               try {
                 ({ data: issue } = await github.rest.issues.get({ owner, repo, issue_number: number }));
-              } catch {
+              } catch (error) {
+                if (error.status !== 404) throw error;
                 problems.push(`#${number} does not exist.`);
                 continue;
               }
@@ -56,16 +66,28 @@ jobs:
               if (!assignees.includes(author)) problems.push(`#${number} is not assigned to @${pr.user.login}.`);
             }
 
-            const checklist = body.split(/^##\s+Checklist\s*$/im)[1];
+            // Every item of the template's checklist must be present and ticked, so deleting
+            // an item does not get around it. Items that do not apply are ticked with a note.
+            const section = (text) => text.split(/^##\s+Checklist\s*$/im)[1]?.split(/^##\s/m)[0];
+            const item = /^\s*(?:[-*+]|\d+[.)])\s+\[([ xX])\]\s+(.+?)\s*$/gm;
+            const { data: template } = await github.rest.repos.getContent({
+              owner, repo, path: ".github/pull_request_template.md", ref: pr.base.ref,
+            });
+            const required = [...(section(Buffer.from(template.content, "base64").toString("utf8")) ?? "").matchAll(item)]
+              .map((m) => m[2].replace(/`/g, "").toLowerCase());
+            const checklist = section(body);
             if (checklist === undefined) {
               problems.push("The PR template's `## Checklist` section is missing.");
             } else {
-              const section = checklist.split(/^##\s/m)[0];
-              const open = section.match(/^\s*[-*]\s+\[ \]\s+(.+)$/gm) ?? [];
-              if (open.length) problems.push(`Checklist items not ticked:\n${open.map((l) => `  ${l.trim()}`).join("\n")}`);
+              const ticked = [...checklist.matchAll(item)]
+                .filter((m) => m[1] !== " ")
+                .map((m) => m[2].replace(/`/g, "").toLowerCase());
+              const missing = required.filter((text) => !ticked.some((t) => t.startsWith(text)));
+              if (missing.length) problems.push(`Checklist items not ticked:\n${missing.map((t) => `  - [ ] ${t}`).join("\n")}`);
             }
 
             if (problems.length) {
+              problems.push("Fix these, then edit the PR description or re-run this check (assigning the issue alone does not re-run it).");
               core.summary.addHeading("Task gate failed", 3).addList(problems);
               await core.summary.write();
               core.setFailed(problems.join("\n"));
