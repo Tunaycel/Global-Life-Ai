@@ -31,8 +31,9 @@ jobs:
               return;
             }
             const author = pr.user.login.toLowerCase();
-            // Hidden text is not part of the description a reviewer reads.
-            const body = (pr.body ?? "").replace(/<!--[\s\S]*?-->/g, "");
+            // Hidden comments and code blocks are not part of the description a reviewer reads.
+            const visible = (text) => text.replace(/<!--[\s\S]*?-->/g, "").replace(/^```[\s\S]*?^```/gm, "");
+            const body = visible(pr.body ?? "");
             const problems = [];
 
             const branch = pr.head.ref.match(/^([A-Za-z0-9-]+)\/(\d+)-[a-z0-9-]+$/);
@@ -69,19 +70,28 @@ jobs:
             // Every item of the template's checklist must be present and ticked, so deleting
             // an item does not get around it. Items that do not apply are ticked with a note.
             const section = (text) => text.split(/^##\s+Checklist\s*$/im)[1]?.split(/^##\s/m)[0];
-            const item = /^\s*(?:[-*+]|\d+[.)])\s+\[([ xX])\]\s+(.+?)\s*$/gm;
-            const { data: template } = await github.rest.repos.getContent({
-              owner, repo, path: ".github/pull_request_template.md", ref: pr.base.ref,
-            });
-            const required = [...(section(Buffer.from(template.content, "base64").toString("utf8")) ?? "").matchAll(item)]
-              .map((m) => m[2].replace(/`/g, "").toLowerCase());
+            const item = /^ {0,3}(?:[-*+]|\d+[.)])\s+\[([ xX])\]\s+(.+?)\s*$/gm;
+            const normalize = (text) => text.replace(/`/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+            let required = [];
+            try {
+              const { data: template } = await github.rest.repos.getContent({
+                owner, repo, path: ".github/pull_request_template.md", ref: pr.base.ref,
+              });
+              required = [...(section(visible(Buffer.from(template.content, "base64").toString("utf8"))) ?? "").matchAll(item)]
+                .map((m) => normalize(m[2]));
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
             const checklist = section(body);
-            if (checklist === undefined) {
+            if (!required.length) {
+              // Fail closed: a renamed or missing template must not turn the checklist off.
+              problems.push(`Could not read the checklist from \`.github/pull_request_template.md\` on \`${pr.base.ref}\`.`);
+            } else if (checklist === undefined) {
               problems.push("The PR template's `## Checklist` section is missing.");
             } else {
               const ticked = [...checklist.matchAll(item)]
                 .filter((m) => m[1] !== " ")
-                .map((m) => m[2].replace(/`/g, "").toLowerCase());
+                .map((m) => normalize(m[2]));
               const missing = required.filter((text) => !ticked.some((t) => t.startsWith(text)));
               if (missing.length) problems.push(`Checklist items not ticked:\n${missing.map((t) => `  - [ ] ${t}`).join("\n")}`);
             }
