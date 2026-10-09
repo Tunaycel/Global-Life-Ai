@@ -49,7 +49,7 @@ jobs:
                 `Welcome to **GlobalLife AI**, @${login}! 👋`,
                 "",
                 "Glad to have you on the team. Your tasks and issues are being prepared right now;",
-                "they will be assigned to you here on GitHub, and you will get an email for each one.",
+                "they will be assigned to you here on GitHub, and GitHub will notify you about each one.",
                 "",
                 "### Before your first task",
                 "",
@@ -68,12 +68,16 @@ jobs:
                 `@${owner} closes this issue once your comment is in.`,
               ].join("\n");
 
-              const { data } = await github.rest.issues.create({
-                owner, repo,
-                title: `Welcome to GlobalLife AI, @${login}`,
-                body,
-                labels: ["onboarding", "task"],
-                assignees: [login],
-              });
-              core.info(`Opened #${data.number} for ${login}`);
+              try {
+                const { data } = await github.rest.issues.create({
+                  owner, repo,
+                  title: `Welcome to GlobalLife AI, @${login}`,
+                  body,
+                  labels: ["onboarding", "task"],
+                  assignees: [login],
+                });
+                core.info(`Opened #${data.number} for ${login}`);
+              } catch (error) {
+                core.setFailed(`Could not welcome ${login}: ${error.message}`);
+              }
             }
