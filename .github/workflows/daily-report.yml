@@ -35,6 +35,7 @@ jobs:
         run: npm ci --prefix . --no-audit --no-fund
       - name: Build and send
         working-directory: scripts/team-report
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
           REPORT_HOURS: ${{ inputs.hours || '24' }}

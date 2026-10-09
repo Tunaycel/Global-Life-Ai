@@ -12,7 +12,14 @@ const env = process.env;
 const [owner, repo] = (env.GITHUB_REPOSITORY || "Tunaycel/globallife").split("/");
 const hours = Number(env.REPORT_HOURS) > 0 ? Number(env.REPORT_HOURS) : 24;
 const tz = env.REPORT_TZ || "Europe/Istanbul";
-const until = new Date();
+// A scheduled run reports up to the last 17:00 UTC, so a late cron start neither drops nor
+// repeats activity between two daily reports.
+const until = (() => {
+  const now = new Date();
+  if (env.GITHUB_EVENT_NAME !== "schedule") return now;
+  const cut = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 17));
+  return cut > now ? new Date(cut.getTime() - 86400_000) : cut;
+})();
 const since = new Date(until.getTime() - hours * 3600_000);
 const inWindow = (iso) => Boolean(iso) && new Date(iso) >= since && new Date(iso) <= until;
 const repoUrl = `https://github.com/${owner}/${repo}`;
@@ -20,7 +27,7 @@ const isBot = (login) => /\[bot\]$/i.test(login ?? "");
 const isAiReviewer = (login) => /^coderabbitai(\[bot\])?$/i.test(login ?? "");
 const roles = JSON.parse(await readFile(new URL("./team.json", import.meta.url), "utf8"));
 
-async function request(url) {
+async function request(url, attempt = 0) {
   const res = await fetch(url, {
     headers: {
       Accept: "application/vnd.github+json",
@@ -28,7 +35,16 @@ async function request(url) {
       "X-GitHub-Api-Version": "2022-11-28",
     },
   });
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
+  // Secondary rate limits answer 403/429 with retry-after; wait and try again twice.
+  if ((res.status === 403 || res.status === 429) && res.headers.get("retry-after") && attempt < 2) {
+    await new Promise((done) => setTimeout(done, Math.min(Number(res.headers.get("retry-after")), 60) * 1000));
+    return request(url, attempt + 1);
+  }
+  if (!res.ok) {
+    const error = new Error(`${res.status} ${res.statusText} for ${url}`);
+    error.status = res.status;
+    throw error;
+  }
   return res;
 }
 
@@ -63,7 +79,10 @@ async function collect() {
   const { default_branch: defaultBranch } = await gh("");
   const iso = since.toISOString();
   const [collaborators, branches, milestones, openIssues, recentIssues, pulls, defaultCommits] = await Promise.all([
-    gh("/collaborators", { affiliation: "direct" }).catch(() => []),
+    gh("/collaborators", { affiliation: "direct" }).catch((error) => {
+      if (error.status === 403 || error.status === 404) return [];
+      throw error;
+    }),
     gh("/branches"),
     gh("/milestones", { state: "open", sort: "due_on" }),
     gh("/issues", { state: "open" }),
@@ -72,16 +91,19 @@ async function collect() {
     gh("/commits", { sha: defaultBranch, since: iso }),
   ]);
 
-  const recentPulls = pulls.filter((p) => new Date(p.updated_at) >= since);
-  const openPulls = await gh("/pulls", { state: "open" });
+  const recentPulls = pulls.filter((p) => new Date(p.updated_at) >= since && p.user);
+  const openPulls = (await gh("/pulls", { state: "open" })).filter((p) => p.user);
+  const mergedPulls = recentPulls.filter((p) => inWindow(p.merged_at));
 
   // Commits made in the window: those on PRs touched in the window (their branches may be
   // deleted already) and on live branches. Anything already on the default branch is left
   // out: squash commits repeat work counted on the PR, and branches contain master's history.
-  const onDefault = new Set(defaultCommits.map((c) => c.sha));
+  // Squash commits of PRs merged into other branches (stacked PRs) and "Update branch" merge
+  // commits are left out for the same reason.
+  const counted = new Set([...defaultCommits.map((c) => c.sha), ...mergedPulls.map((p) => p.merge_commit_sha)]);
   const commits = new Map();
   const addCommit = (c) => {
-    if (onDefault.has(c.sha) || !inWindow(c.commit.author?.date ?? c.commit.committer?.date)) return;
+    if (counted.has(c.sha) || c.parents?.length > 1 || !inWindow(c.commit.author?.date ?? c.commit.committer?.date)) return;
     const login = c.author?.login;
     if (isBot(login)) return;
     commits.set(c.sha, { login: login ?? `${c.commit.author?.name ?? "unknown"} (no GitHub account)`, linked: Boolean(login) });
@@ -94,16 +116,16 @@ async function collect() {
   const reviews = (await each(recentPulls, async (p) => (await gh(`/pulls/${p.number}/reviews`)).map((r) => ({ ...r, pr: p }))))
     .flat()
     .filter((r) => inWindow(r.submitted_at));
-  // Replying to a review thread creates a COMMENTED review by the replier; only reviews of
-  // someone else's PR count as reviewing.
-  const humanReviews = reviews.filter((r) => !isBot(r.user.login) && r.user.login !== r.pr.user.login);
-  const aiReviews = reviews.filter((r) => isAiReviewer(r.user.login));
+  // Replying to a review thread creates a COMMENTED review by the replier, so a review counts
+  // once per reviewer and PR, and only on someone else's PR.
+  const uniquePerPr = (list) => [...new Map(list.map((r) => [`${r.user.login}#${r.pr.number}`, r])).values()];
+  const humanReviews = uniquePerPr(reviews.filter((r) => r.user && !isBot(r.user.login) && r.user.login !== r.pr.user.login));
+  const aiReviews = reviews.filter((r) => r.user && isAiReviewer(r.user.login) && r.state !== "COMMENTED");
 
   const closedIssues = recentIssues.filter(
     (i) => !i.pull_request && i.state === "closed" && i.state_reason === "completed" && inWindow(i.closed_at),
   );
   const openedIssues = recentIssues.filter((i) => !i.pull_request && inWindow(i.created_at));
-  const mergedPulls = recentPulls.filter((p) => inWindow(p.merged_at));
   const openedPulls = recentPulls.filter((p) => inWindow(p.created_at));
   const openTasks = openIssues.filter((i) => !i.pull_request);
   const mergedStats = new Map(
@@ -125,6 +147,7 @@ async function collect() {
     return people.get(key);
   };
   collaborators.forEach((c) => person(c.login));
+  Object.keys(roles).forEach((login) => person(login));
   if (!collaborators.some((c) => c.login.toLowerCase() === owner.toLowerCase())) person(owner);
   for (const c of commits.values()) person(c.login, c.linked).commits++;
   openedPulls.filter((p) => !isBot(p.user.login)).forEach((p) => person(p.user.login).prsOpened++);
@@ -140,10 +163,16 @@ async function collect() {
 
   const lead = owner.toLowerCase();
   const latestAiState = new Map();
+  const leadReviewedHead = new Set();
   for (const r of (await each(openPulls, async (p) => (await gh(`/pulls/${p.number}/reviews`)).map((x) => ({ ...x, pr: p })))).flat()) {
+    if (!r.user) continue;
     if (isAiReviewer(r.user.login) && r.state !== "COMMENTED") latestAiState.set(r.pr.number, r.state);
+    if (r.user.login.toLowerCase() === lead && r.commit_id === r.pr.head.sha) leadReviewedHead.add(r.pr.number);
   }
-  const contributorPulls = openPulls.filter((p) => !p.draft && p.user.login.toLowerCase() !== lead && !isBot(p.user.login));
+  // Contributor PRs the lead has not reviewed at their latest commit, by AI first-check state.
+  const contributorPulls = openPulls.filter(
+    (p) => !p.draft && p.user.login.toLowerCase() !== lead && !isBot(p.user.login) && !leadReviewedHead.has(p.number),
+  );
 
   return {
     people: [...people.values()].sort(
@@ -156,8 +185,9 @@ async function collect() {
       changesRequested: aiReviews.filter((r) => r.state === "CHANGES_REQUESTED").length,
       approved: aiReviews.filter((r) => r.state === "APPROVED").length,
     },
-    readyForLead: contributorPulls.filter((p) => latestAiState.get(p.number) !== "CHANGES_REQUESTED"),
+    readyForLead: contributorPulls.filter((p) => latestAiState.get(p.number) === "APPROVED"),
     blockedByAi: contributorPulls.filter((p) => latestAiState.get(p.number) === "CHANGES_REQUESTED"),
+    waitingForAi: contributorPulls.filter((p) => !["APPROVED", "CHANGES_REQUESTED"].includes(latestAiState.get(p.number))),
     drafts: openPulls.filter((p) => p.draft),
   };
 }
@@ -199,7 +229,7 @@ function rows(items, empty) {
 function bar(pct, color = C.blue, height = 8) {
   const p = Math.max(0, Math.min(100, Math.round(pct)));
   return `${table(`width="100%" bgcolor="${C.line}"`, `background:${C.line};border-radius:${height}px`)}<tr>
-    ${p ? `<td width="${p}%" bgcolor="${color}" style="height:${height}px;background:${color};background-image:linear-gradient(90deg,${C.blue},${C.violet});border-radius:${height}px;font-size:0;line-height:0">&nbsp;</td>` : ""}
+    ${p ? `<td width="${p}%" bgcolor="${color}" style="height:${height}px;background:${color};background-image:linear-gradient(90deg,${color},${color === C.blue ? C.violet : color});border-radius:${height}px;font-size:0;line-height:0">&nbsp;</td>` : ""}
     ${p < 100 ? `<td style="height:${height}px;font-size:0;line-height:0">&nbsp;</td>` : ""}
   </tr></table>`;
 }
@@ -240,6 +270,7 @@ function render(d) {
   const attention = [
     ...d.readyForLead.map((p) => ({ icon: "●", color: C.amber, number: p.number, title: p.title, url: p.html_url, meta: `@${esc(p.user.login)} · passed the AI first check, needs your review` })),
     ...d.blockedByAi.map((p) => ({ icon: "●", color: C.red, number: p.number, title: p.title, url: p.html_url, meta: `@${esc(p.user.login)} · AI first check requested changes` })),
+    ...d.waitingForAi.map((p) => ({ icon: "◌", color: C.muted, number: p.number, title: p.title, url: p.html_url, meta: `@${esc(p.user.login)} · waiting for the AI first check` })),
   ];
 
   const max = Math.max(1, ...d.people.map((p) => p.openTasks));
@@ -259,7 +290,7 @@ function render(d) {
             ${chip("reviews", p.reviews)}
           </tr></table>
           <div style="margin:4px 0 6px;font-size:12px;color:${C.muted}">
-            ${p.prsOpened} PRs opened · <span style="color:${C.green}">+${p.added}</span> <span style="color:${C.red}">−${p.removed}</span> lines merged · ${p.openTasks} open tasks
+            ${plural(p.prsOpened, "PR")} opened · <span style="color:${C.green}">+${p.added}</span> <span style="color:${C.red}">−${p.removed}</span> lines merged · ${plural(p.openTasks, "open task")}
           </div>
           ${bar((p.openTasks / max) * 100, C.violet, 6)}
         </td>
@@ -334,7 +365,7 @@ ${table('width="100%"', "max-width:680px")}
   ${section("Completed", rows(d.closedIssues.map((i) => ({ icon: "✓", color: C.green, number: i.number, title: i.title, url: i.html_url, meta: assignees(i) })), "No tasks finished in this window."), C.green)}
   ${section("Merged", rows(d.mergedPulls.map((p) => ({ icon: "⇢", color: C.blue, number: p.number, title: p.title, url: p.html_url, meta: `@${esc(p.user.login)} · <span style="color:${C.green}">+${d.mergedStats.get(p.number).added}</span> <span style="color:${C.red}">−${d.mergedStats.get(p.number).removed}</span>` })), "Nothing merged in this window."), C.blue)}
   ${section("Team", `${table('width="100%"')}${team}</table>
-    <p style="margin:10px 0 0;${F}font-size:12px;color:${C.muted}">Activity in the last ${hours} hours, not hours worked. The bar shows each person's share of open tasks.</p>`, C.violet)}
+    <p style="margin:10px 0 0;${F}font-size:12px;color:${C.muted}">Activity in the last ${hours} hours, not hours worked. The bar shows open tasks relative to the busiest person.</p>`, C.violet)}
   ${section("AI first check", aiBlock, C.violet)}
   ${section("Milestones", milestones, C.blue)}
   ${section("Open tasks by person", workload || `<p style="color:${C.muted}">No open tasks.</p>`, C.amber)}
@@ -357,6 +388,7 @@ async function send(html, subject) {
     host: env.SMTP_HOST,
     port,
     secure: port === 465,
+    requireTLS: port !== 465,
     auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
   });
   await transport.sendMail({
@@ -370,7 +402,7 @@ async function send(html, subject) {
 
 const data = await collect();
 const html = render(data);
-const out = env.OUT || "report.html";
+const out = env.OUT || new URL("./report.html", import.meta.url);
 // The saved copy shows the logo from disk; the email carries it as an inline attachment.
 await writeFile(out, html.replace("cid:globallife-logo", "logo.png"));
 const subject = `GlobalLife AI · ${data.closedIssues.length} done · ${data.mergedPulls.length} merged · ${data.readyForLead.length} waiting for review`;
