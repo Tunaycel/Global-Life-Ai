@@ -1,0 +1,56 @@
+name: Daily team report
+
+on:
+  schedule:
+    # 20:00 Europe/Istanbul
+    - cron: "0 17 * * *"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: Hours to cover
+        default: "24"
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: daily-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    name: Build and send the report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Install the mailer
+        working-directory: scripts/team-report
+        run: npm install --no-save --no-package-lock nodemailer@6
+      - name: Build and send
+        working-directory: scripts/team-report
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPORT_HOURS: ${{ inputs.hours || '24' }}
+          REPORT_TZ: Europe/Istanbul
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          REPORT_FROM: ${{ secrets.REPORT_FROM }}
+          REPORT_TO: ${{ secrets.REPORT_TO }}
+          OUT: report.html
+        run: |
+          node report.mjs | tee subject.txt
+          { echo "### $(head -n1 subject.txt)"; echo; echo "The full report is attached to this run as an artifact."; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: daily-report
+          path: |
+            scripts/team-report/report.html
+            scripts/team-report/logo.png
+          retention-days: 30
