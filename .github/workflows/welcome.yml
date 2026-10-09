@@ -1,0 +1,79 @@
+name: Welcome collaborators
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: welcome
+  cancel-in-progress: false
+
+jobs:
+  welcome:
+    name: Open onboarding issues
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const collaborators = await github.paginate(github.rest.repos.listCollaborators, {
+              owner, repo, affiliation: "direct", per_page: 100,
+            });
+            const onboarding = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, labels: "onboarding", state: "all", per_page: 100,
+            });
+
+            // Someone counts as welcomed if an onboarding issue is assigned to them
+            // or carries their marker, so reassigning or closing it never re-welcomes.
+            const welcomed = new Set();
+            for (const issue of onboarding) {
+              if (issue.pull_request) continue;
+              for (const a of issue.assignees ?? []) welcomed.add(a.login.toLowerCase());
+              for (const m of (issue.body ?? "").matchAll(/<!-- welcome:([\w-]+) -->/g)) {
+                welcomed.add(m[1].toLowerCase());
+              }
+            }
+
+            const rules = `https://github.com/${owner}/${repo}/blob/master`;
+            for (const { login } of collaborators) {
+              if (login.toLowerCase() === owner.toLowerCase() || welcomed.has(login.toLowerCase())) continue;
+
+              const body = [
+                `<!-- welcome:${login} -->`,
+                `Welcome to **GlobalLife AI**, @${login}! 👋`,
+                "",
+                "Glad to have you on the team. Your tasks and issues are being prepared right now;",
+                "they will be assigned to you here on GitHub, and you will get an email for each one.",
+                "",
+                "### Before your first task",
+                "",
+                `- [ ] Read [CONTRIBUTING.md](${rules}/CONTRIBUTING.md): the whole workflow from issue to merge`,
+                `- [ ] Read the [README](${rules}/README.md), the [PR template](${rules}/.github/pull_request_template.md) and the [ADRs](${rules}/docs/adr)`,
+                "- [ ] Turn on email notifications for this repo (Watch → Participating and @mentions)",
+                "- [ ] Comment here in your own words: how a task goes from issue to merge, what must happen before every push, and who merges",
+                "",
+                "### The rules in short",
+                "",
+                "1. Every task is an issue. Branch: `<your-user>/<issue-number>-<short-name>` from fresh `master`.",
+                "2. Before every push: typecheck, lint, build, two independent code reviews; fix every real finding, then run the checks again.",
+                "3. Draft PR with `Closes #N`; CI and CodeRabbit run on every push.",
+                `4. @${owner} reviews and is the only one who merges (squash). Nobody pushes to \`master\` directly.`,
+                "",
+                `@${owner} closes this issue once your comment is in.`,
+              ].join("\n");
+
+              const { data } = await github.rest.issues.create({
+                owner, repo,
+                title: `Welcome to GlobalLife AI, @${login}`,
+                body,
+                labels: ["onboarding", "task"],
+                assignees: [login],
+              });
+              core.info(`Opened #${data.number} for ${login}`);
+            }
