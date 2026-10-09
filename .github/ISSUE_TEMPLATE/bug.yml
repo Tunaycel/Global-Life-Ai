@@ -1,0 +1,30 @@
+name: Bug
+description: Something does not work as it should
+labels: ["bug"]
+body:
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open /dashboard/visa
+        2. Click Analyze
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+      description: What happened instead. Paste errors and screenshots here.
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Browser / OS
