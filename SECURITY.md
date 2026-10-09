@@ -14,5 +14,5 @@ database provider) should be reported to their vendors.
 ## Handling secrets and personal data
 
 - Secrets live in environment variables, never in the repository.
-- Visa documents and other personal data are stored outside the repository, encrypted, and
-  deletable by their owner.
+- Visa documents and other personal data never go into the repository. Once document storage
+  ships (#23) they will be stored encrypted and deletable by their owner.

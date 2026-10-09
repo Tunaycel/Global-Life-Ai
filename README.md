@@ -43,11 +43,11 @@ Measured on `master`, October 2026.
 | TypeScript / TSX in `src/` | 7,111 lines |
 | Routes (`page.tsx`) | 18 |
 | React components | 27 |
-| Locales | 4 (TR, EN, DE, PL) — typed, missing keys fail the build |
+| Locales | 4 (TR, EN, DE, PL) — one dictionary in `src/lib/i18n.ts`, falls back to English; most screens not wired yet ([#8](https://github.com/Tunaycel/globallife/issues/8)) |
 | API routes | 1 (NextAuth) |
 | Runtime / dev dependencies | 20 / 9 |
 | Automated tests | 0 — Vitest and Playwright land in [#18](https://github.com/Tunaycel/globallife/issues/18) |
-| Lint | 15 errors, 46 warnings — fixed in [#2](https://github.com/Tunaycel/globallife/issues/2) |
+| Lint | 15 errors, 46 warnings — tracked in [#2](https://github.com/Tunaycel/globallife/issues/2) |
 | CI | typecheck + production build on every PR |
 
 ## What works today
@@ -98,11 +98,11 @@ Key decisions are recorded as ADRs in [`docs/adr`](docs/adr).
 
 | Milestone | Scope | Progress |
 |---|---|---|
-| [M1 Foundation](https://github.com/Tunaycel/globallife/milestone/1) | lint, auth guard, data contract, database, tests | ![](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/1?label=) |
-| [M2 Visa core](https://github.com/Tunaycel/globallife/milestone/2) | eligibility engine, sourced data for DE / PL / NL, roadmap, documents | ![](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/2?label=) |
-| [M3 AI assistant](https://github.com/Tunaycel/globallife/milestone/3) | one assistant, real model, answers cite sources | ![](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/3?label=) |
-| [M4 Language](https://github.com/Tunaycel/globallife/milestone/4) | lessons, progress, speaking and IELTS practice | ![](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/4?label=) |
-| [M5 Quality and launch](https://github.com/Tunaycel/globallife/milestone/5) | i18n, accessibility, performance, monitoring, privacy | ![](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/5?label=) |
+| [M1 Foundation](https://github.com/Tunaycel/globallife/milestone/1) | lint, auth guard, data contract, database, tests | ![M1 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/1?label=) |
+| [M2 Visa core](https://github.com/Tunaycel/globallife/milestone/2) | eligibility engine, sourced data for DE / PL / NL, roadmap, documents | ![M2 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/2?label=) |
+| [M3 AI assistant](https://github.com/Tunaycel/globallife/milestone/3) | one assistant, real model, answers cite sources | ![M3 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/3?label=) |
+| [M4 Language](https://github.com/Tunaycel/globallife/milestone/4) | lessons, progress, speaking and IELTS practice | ![M4 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/4?label=) |
+| [M5 Quality and launch](https://github.com/Tunaycel/globallife/milestone/5) | i18n, accessibility, performance, monitoring, privacy | ![M5 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/5?label=) |
 
 ## Engineering process
 
@@ -124,7 +124,7 @@ The full workflow is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Quality gates
 
-Enforced by GitHub on `master` ([rulesets as code](.github/rulesets), [ADR 0002](docs/adr/0002-split-rulesets.md)):
+Enforced by GitHub on `master` unless noted ([rulesets as code](.github/rulesets), [ADR 0002](docs/adr/0002-split-rulesets.md)):
 
 | Gate | Applies to |
 |---|---|
@@ -132,7 +132,7 @@ Enforced by GitHub on `master` ([rulesets as code](.github/rulesets), [ADR 0002]
 | Pull request required, squash merge only | everyone |
 | CI `Typecheck and build` green on an up-to-date branch | everyone |
 | All review threads resolved (including CodeRabbit's) | everyone |
-| Code-owner approval on the latest push; stale approvals dismissed | every PR the owner did not open |
+| Code-owner approval on the latest push; stale approvals dismissed | every PR the owner did not open — the owner can bypass, by agreement only on their own PRs ([ADR 0002](docs/adr/0002-split-rulesets.md)) |
 | Only the owner updates `master` | everyone else |
 
 ## Getting started
