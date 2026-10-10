@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle, Circle, ArrowRight } from "lucide-react";
+import { CheckCircle, Circle, ArrowRight, Map as MapIcon } from "lucide-react";
+import EmptyState from "@/components/ui/EmptyState";
 
 type Step = { text: string; done: boolean; current?: boolean };
 type Phase = { title: string; status: string; steps: Step[] };
@@ -102,6 +103,14 @@ export default function RoadmapPage() {
 
             {/* Timeline */}
             <div className="space-y-0">
+                {phases.length === 0 && (
+                    <EmptyState
+                        icon={MapIcon}
+                        title="Yol haritan henüz hazır değil."
+                        description="Hedef ülkeni seçince adım adım planın burada görünecek."
+                        action={{ label: "Hedef ülkeni seç", href: "/dashboard/visa/countries" }}
+                    />
+                )}
                 {phases.map((phase, pi) => (
                     <motion.div
                         key={phase.title}

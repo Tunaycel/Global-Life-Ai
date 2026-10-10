@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/ui/EmptyState";
 import { Upload, FileText, Image, CheckCircle, AlertCircle, Clock, Eye, Trash2, Plus } from "lucide-react";
 
 const documents = [
@@ -48,6 +49,7 @@ export default function DocumentsPage() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                id="upload"
                 className="border-2 border-dashed border-[var(--border)] rounded-2xl p-8 text-center hover:border-[var(--color-primary)]/50 transition-colors cursor-pointer"
             >
                 <Upload className="w-10 h-10 text-[var(--text-tertiary)] mx-auto mb-3" />
@@ -57,6 +59,14 @@ export default function DocumentsPage() {
 
             {/* Document List */}
             <div className="space-y-3">
+                {documents.length === 0 && (
+                    <EmptyState
+                        icon={FileText}
+                        title="Henüz belge yüklemedin."
+                        description="Vize başvurun için gereken belgeleri buraya ekleyebilirsin."
+                        action={{ label: "İlk belgeni yükle", href: "#upload" }}
+                    />
+                )}
                 {documents.map((doc, i) => {
                     const status = statusConfig[doc.status];
                     const StatusIcon = status.icon;

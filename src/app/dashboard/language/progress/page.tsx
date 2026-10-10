@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import EmptyState from "@/components/ui/EmptyState";
 import { BarChart3, TrendingUp, Clock, BookOpen, Flame, Target, Calendar } from "lucide-react";
 
 const weeklyData = [
@@ -135,6 +136,14 @@ export default function ProgressPage() {
                     <TrendingUp className="w-5 h-5 text-[#30D158]" /> Son Dersler
                 </h3>
                 <div className="space-y-3">
+                    {recentLessons.length === 0 && (
+                        <EmptyState
+                            icon={BookOpen}
+                            title="Henüz ders tamamlamadın."
+                            description="İlk dersini bitirdiğinde sonuçların burada listelenecek."
+                            action={{ label: "İlk derse başla", href: "/dashboard/language/lesson" }}
+                        />
+                    )}
                     {recentLessons.map((lesson, i) => (
                         <div
                             key={i}
