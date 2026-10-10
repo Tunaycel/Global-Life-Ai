@@ -1,5 +1,6 @@
 # Weekly dependency updates as small PRs. Minor and patch npm updates arrive together,
-# majors one by one, GitHub Actions in their own PR.
+# majors one by one, GitHub Actions in their own PR. The open-PR limit is per ecosystem,
+# so 4 + 1 keeps the total at five.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -9,7 +10,7 @@ updates:
       day: monday
       time: "06:00"
       timezone: Europe/Istanbul
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 4
     labels: [dependencies]
     groups:
       npm-minor-and-patch:
@@ -22,7 +23,7 @@ updates:
       day: monday
       time: "06:00"
       timezone: Europe/Istanbul
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     labels: [dependencies]
     groups:
       github-actions:
