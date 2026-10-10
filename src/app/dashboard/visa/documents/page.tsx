@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, FileText, Image, CheckCircle, AlertCircle, Clock, Eye, Trash2, Plus } from "lucide-react";
+import { Upload, FileText, Image, CheckCircle, AlertCircle, Clock, Eye, Trash2, Plus, Sparkles } from "lucide-react";
 
 const documents = [
-    { name: "Pasaport.pdf", status: "approved", date: "5 Şubat 2026", size: "2.3 MB", icon: "📕" },
-    { name: "Banka_Dökümü.pdf", status: "approved", date: "3 Şubat 2026", size: "1.1 MB", icon: "📄" },
-    { name: "Transkript.pdf", status: "reviewing", date: "10 Şubat 2026", size: "3.4 MB", icon: "📋" },
-    { name: "Motivasyon_Mektubu.docx", status: "issue", date: "11 Şubat 2026", size: "0.5 MB", icon: "📝" },
-    { name: "Sağlık_Sigortası.pdf", status: "pending", date: "—", size: "—", icon: "🏥" },
-    { name: "Kabul_Mektubu.pdf", status: "pending", date: "—", size: "—", icon: "🎓" },
+    { name: "Pasaport.pdf", status: "approved", date: "5 Şubat 2026", size: "2.3 MB" },
+    { name: "Banka_Dökümü.pdf", status: "approved", date: "3 Şubat 2026", size: "1.1 MB" },
+    { name: "Transkript.pdf", status: "reviewing", date: "10 Şubat 2026", size: "3.4 MB" },
+    { name: "Motivasyon_Mektubu.docx", status: "issue", date: "11 Şubat 2026", size: "0.5 MB" },
+    { name: "Sağlık_Sigortası.pdf", status: "pending", date: "—", size: "—" },
+    { name: "Kabul_Mektubu.pdf", status: "pending", date: "—", size: "—" },
 ];
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
@@ -68,7 +68,7 @@ export default function DocumentsPage() {
                             transition={{ delay: i * 0.06 }}
                             className="flex items-center gap-4 p-4 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] hover:shadow-sm transition-all"
                         >
-                            <span className="text-2xl shrink-0">{doc.icon}</span>
+                            <FileText className="w-6 h-6 shrink-0 text-[var(--text-secondary)]" />
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{doc.name}</p>
                                 <p className="text-xs text-[var(--text-tertiary)]">{doc.date} • {doc.size}</p>
@@ -99,7 +99,7 @@ export default function DocumentsPage() {
             {/* AI Analysis */}
             <div className="rounded-2xl bg-gradient-to-r from-[#5E5CE6]/10 to-[#BF5AF2]/10 border border-[#5E5CE6]/20 p-6">
                 <h3 className="font-semibold text-[var(--text-primary)] mb-2 flex items-center gap-2">
-                    ✨ AI Belge Analizi
+                    <Sparkles className="w-5 h-5 text-[#5E5CE6]" /> AI Belge Analizi
                 </h3>
                 <p className="text-sm text-[var(--text-secondary)] mb-4">
                     Yüklenen belgelerinizi AI ile analiz edin. Eksik bilgi, format hatası ve süre kontrolü otomatik yapılır.
