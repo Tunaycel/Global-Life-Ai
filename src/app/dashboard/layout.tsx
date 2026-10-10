@@ -37,7 +37,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const userImage = session?.user?.image;
     const userInitial = userName.charAt(0).toUpperCase();
 
-    const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
+    // A render helper, not a component: a component declared in here would be
+    // recreated (and remounted, Globe3D included) on every render.
+    const renderSidebar = (mobile = false) => (
         <div
             className={cn(
                 "h-full flex flex-col",
@@ -157,7 +159,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="h-screen flex overflow-hidden" style={{ background: "#030308" }}>
             {/* Desktop Sidebar */}
             <div className="hidden lg:block relative shrink-0 transition-all duration-300">
-                <Sidebar />
+                {renderSidebar()}
             </div>
 
             {/* Mobile Sidebar */}
@@ -178,7 +180,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                             transition={{ type: "spring", stiffness: 300, damping: 30 }}
                             className="fixed left-0 top-0 bottom-0 z-50 lg:hidden"
                         >
-                            <Sidebar mobile />
+                            {renderSidebar(true)}
                         </motion.div>
                     </>
                 )}
