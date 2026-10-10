@@ -126,3 +126,13 @@ Google credentials come from a Google Cloud OAuth client with
 npm run dev     # http://localhost:3000
 npm run build
 ```
+
+## Tests
+
+```bash
+npm test                                  # unit tests (Vitest), *.test.ts next to the code in src/
+npm run build && npm run test:e2e         # smoke test of the production build (Playwright), e2e/
+```
+
+The first Playwright run needs a browser: `npx playwright install chromium`. CI runs both in the
+`Typecheck and build` job.
