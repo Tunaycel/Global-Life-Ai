@@ -157,6 +157,16 @@ const translations = {
         },
         button: { tr: "Hemen Başla", en: "Get Started Now", de: "Jetzt starten", pl: "Zacznij teraz" },
     },
+    notFound: {
+        title: { tr: "Bu sayfa bulunamadı.", en: "This page could not be found.", de: "Diese Seite wurde nicht gefunden.", pl: "Nie znaleziono tej strony." },
+        description: {
+            tr: "Adres yanlış yazılmış ya da sayfa kaldırılmış olabilir.",
+            en: "The address may be mistyped, or the page may have been removed.",
+            de: "Die Adresse ist vielleicht falsch geschrieben oder die Seite wurde entfernt.",
+            pl: "Adres może być błędnie wpisany lub strona została usunięta.",
+        },
+        back: { tr: "Ana sayfaya dön", en: "Back to the home page", de: "Zurück zur Startseite", pl: "Wróć do strony głównej" },
+    },
 } as const;
 
 export type TranslationKey = keyof typeof translations;
