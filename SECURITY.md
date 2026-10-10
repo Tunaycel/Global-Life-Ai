@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Please do not open a public issue. Use GitHub's
-[private vulnerability reporting](https://github.com/Tunaycel/globallife/security/advisories/new)
+[private vulnerability reporting](https://github.com/Tunaycel/Global-Life-Ai/security/advisories/new)
 with steps to reproduce and the impact you expect. You will get an answer within 7 days.
 
 ## Scope

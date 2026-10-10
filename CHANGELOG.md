@@ -8,6 +8,7 @@ versions follow [Semantic Versioning](https://semver.org/).
 ### Added
 - Contribution workflow: issue and PR templates, CODEOWNERS, CI (typecheck and build),
   CodeRabbit reviews, branch rulesets as code, CONTRIBUTING.md (#1).
+- Vitest unit tests and a Playwright smoke test, run in CI (#40).
 - README with codebase metrics and roadmap; ADR, design doc, postmortem and release
   templates; first ADRs; security policy (#31).
 

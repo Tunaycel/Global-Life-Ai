@@ -3,11 +3,11 @@
 **One place to plan a move abroad: which visa fits you, what it needs, and the language level
 it asks for — with a plan to reach that level in time.**
 
-[![CI](https://github.com/Tunaycel/globallife/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Tunaycel/globallife/actions/workflows/ci.yml)
+[![CI](https://github.com/Tunaycel/Global-Life-Ai/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Tunaycel/Global-Life-Ai/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![M1 Foundation](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/1?label=M1%20Foundation)](https://github.com/Tunaycel/globallife/milestone/1)
-[![Open issues](https://img.shields.io/github/issues/Tunaycel/globallife)](https://github.com/Tunaycel/globallife/issues)
-[![Open PRs](https://img.shields.io/github/issues-pr/Tunaycel/globallife)](https://github.com/Tunaycel/globallife/pulls)
+[![M1 Foundation](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/1?label=M1%20Foundation)](https://github.com/Tunaycel/Global-Life-Ai/milestone/1)
+[![Open issues](https://img.shields.io/github/issues/Tunaycel/Global-Life-Ai)](https://github.com/Tunaycel/Global-Life-Ai/issues)
+[![Open PRs](https://img.shields.io/github/issues-pr/Tunaycel/Global-Life-Ai)](https://github.com/Tunaycel/Global-Life-Ai/pulls)
 
 Next.js 16 · React 19 · TypeScript 5.9 · NextAuth · Three.js · Tailwind 4 · Zustand
 
@@ -43,24 +43,24 @@ Measured on `master`, October 2026.
 | TypeScript / TSX in `src/` | 7,111 lines |
 | Routes (`page.tsx`) | 18 |
 | React components | 27 |
-| Locales | 4 (TR, EN, DE, PL) — one dictionary in `src/lib/i18n.ts`, falls back to English; most screens not wired yet ([#8](https://github.com/Tunaycel/globallife/issues/8)) |
+| Locales | 4 (TR, EN, DE, PL) — one dictionary in `src/lib/i18n.ts`, falls back to English; most screens not wired yet ([#8](https://github.com/Tunaycel/Global-Life-Ai/issues/8)) |
 | API routes | 1 (NextAuth) |
 | Runtime / dev dependencies | 20 / 9 |
-| Automated tests | 0 — Vitest and Playwright land in [#18](https://github.com/Tunaycel/globallife/issues/18) |
-| Lint | 15 errors, 46 warnings — tracked in [#2](https://github.com/Tunaycel/globallife/issues/2) |
-| CI | typecheck + production build on every PR |
+| Automated tests | 3 — 2 unit tests (Vitest) and 1 smoke test of the production build (Playwright) |
+| Lint | 15 errors, 46 warnings — tracked in [#2](https://github.com/Tunaycel/Global-Life-Ai/issues/2) |
+| CI | typecheck, unit tests, production build and smoke test on every PR |
 
 ## What works today
 
 | Area | State | Tracking |
 |---|---|---|
 | Google sign-in, session with stable user id | **Working** | — |
-| Dashboard route guard | Missing | [#4](https://github.com/Tunaycel/globallife/issues/4) |
-| Landing, dashboard, 3D scenes, transitions, responsive layout | **Working** (static content) | [#3](https://github.com/Tunaycel/globallife/issues/3) removes unverifiable claims |
-| Visa guide, roadmap, documents | Designed, hardcoded data | [M2](https://github.com/Tunaycel/globallife/milestone/2) |
-| AI assistant (three chat UIs) | Scripted replies, no model call | [M3](https://github.com/Tunaycel/globallife/milestone/3) |
-| Lessons, IELTS practice, progress, stats | Designed, hardcoded data | [M4](https://github.com/Tunaycel/globallife/milestone/4) |
-| Database, storage, reminders | Not started | [#20](https://github.com/Tunaycel/globallife/issues/20), [#23](https://github.com/Tunaycel/globallife/issues/23), [#28](https://github.com/Tunaycel/globallife/issues/28) |
+| Dashboard route guard | Missing | [#4](https://github.com/Tunaycel/Global-Life-Ai/issues/4) |
+| Landing, dashboard, 3D scenes, transitions, responsive layout | **Working** (static content) | [#3](https://github.com/Tunaycel/Global-Life-Ai/issues/3) removes unverifiable claims |
+| Visa guide, roadmap, documents | Designed, hardcoded data | [M2](https://github.com/Tunaycel/Global-Life-Ai/milestone/2) |
+| AI assistant (three chat UIs) | Scripted replies, no model call | [M3](https://github.com/Tunaycel/Global-Life-Ai/milestone/3) |
+| Lessons, IELTS practice, progress, stats | Designed, hardcoded data | [M4](https://github.com/Tunaycel/Global-Life-Ai/milestone/4) |
+| Database, storage, reminders | Not started | [#20](https://github.com/Tunaycel/Global-Life-Ai/issues/20), [#23](https://github.com/Tunaycel/Global-Life-Ai/issues/23), [#28](https://github.com/Tunaycel/Global-Life-Ai/issues/28) |
 
 ## Architecture
 
@@ -98,11 +98,11 @@ Key decisions are recorded as ADRs in [`docs/adr`](docs/adr).
 
 | Milestone | Scope | Progress |
 |---|---|---|
-| [M1 Foundation](https://github.com/Tunaycel/globallife/milestone/1) | lint, auth guard, data contract, database, tests | ![M1 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/1?label=) |
-| [M2 Visa core](https://github.com/Tunaycel/globallife/milestone/2) | eligibility engine, sourced data for DE / PL / NL, roadmap, documents | ![M2 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/2?label=) |
-| [M3 AI assistant](https://github.com/Tunaycel/globallife/milestone/3) | one assistant, real model, answers cite sources | ![M3 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/3?label=) |
-| [M4 Language](https://github.com/Tunaycel/globallife/milestone/4) | lessons, progress, speaking and IELTS practice | ![M4 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/4?label=) |
-| [M5 Quality and launch](https://github.com/Tunaycel/globallife/milestone/5) | i18n, accessibility, performance, monitoring, privacy | ![M5 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/globallife/5?label=) |
+| [M1 Foundation](https://github.com/Tunaycel/Global-Life-Ai/milestone/1) | lint, auth guard, data contract, database, tests | ![M1 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/1?label=) |
+| [M2 Visa core](https://github.com/Tunaycel/Global-Life-Ai/milestone/2) | eligibility engine, sourced data for DE / PL / NL, roadmap, documents | ![M2 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/2?label=) |
+| [M3 AI assistant](https://github.com/Tunaycel/Global-Life-Ai/milestone/3) | one assistant, real model, answers cite sources | ![M3 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/3?label=) |
+| [M4 Language](https://github.com/Tunaycel/Global-Life-Ai/milestone/4) | lessons, progress, speaking and IELTS practice | ![M4 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/4?label=) |
+| [M5 Quality and launch](https://github.com/Tunaycel/Global-Life-Ai/milestone/5) | i18n, accessibility, performance, monitoring, privacy | ![M5 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/5?label=) |
 
 ## Engineering process
 
@@ -140,8 +140,8 @@ Enforced by GitHub on `master` unless noted ([rulesets as code](.github/rulesets
 Requirements: Node.js 20.9+ (CI uses 24), npm.
 
 ```bash
-git clone https://github.com/Tunaycel/globallife
-cd globallife
+git clone https://github.com/Tunaycel/Global-Life-Ai
+cd Global-Life-Ai
 npm install
 ```
 
