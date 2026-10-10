@@ -1,112 +1,147 @@
-# globallife
+# GlobalLife AI
 
-A front-end for a relocation platform: visa guidance and language learning in one dashboard,
-built as a design and architecture exercise in Next.js 16 and React 19.
+**One place to plan a move abroad: which visa fits you, what it needs, and the language level
+it asks for — with a plan to reach that level in time.**
 
-~7,100 lines of TypeScript · Next.js 16 · React 19 · NextAuth · Three.js · Tailwind · Zustand
+[![CI](https://github.com/Tunaycel/Global-Life-Ai/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Tunaycel/Global-Life-Ai/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![M1 Foundation](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/1?label=M1%20Foundation)](https://github.com/Tunaycel/Global-Life-Ai/milestone/1)
+[![Open issues](https://img.shields.io/github/issues/Tunaycel/Global-Life-Ai)](https://github.com/Tunaycel/Global-Life-Ai/issues)
+[![Open PRs](https://img.shields.io/github/issues-pr/Tunaycel/Global-Life-Ai)](https://github.com/Tunaycel/Global-Life-Ai/pulls)
 
-> **Read this first.** This is a front-end build. Authentication is real — Google OAuth through
-> NextAuth. The product surfaces are not backed by services yet: the support chatbot answers
-> from a hardcoded response map, and the visa and lesson screens render designed states rather
-> than live data. Details in [Status](#status).
+Next.js 16 · React 19 · TypeScript 5.9 · NextAuth · Three.js · Tailwind 4 · Zustand
+
+> **Status: front-end complete, back-end in progress.** Google sign-in is real. Visa, lesson and
+> assistant screens still render designed states from hardcoded data; the database, APIs and the
+> AI assistant are being built in [milestones M1–M5](#roadmap). Nothing on this page claims
+> more than that.
 
 ---
 
-## What's in it
+## Contents
 
-**Three product areas**, each a route group under `/dashboard`:
+[Why](#why) · [Codebase at a glance](#codebase-at-a-glance) · [What works today](#what-works-today) ·
+[Architecture](#architecture) · [Roadmap](#roadmap) · [Engineering process](#engineering-process) ·
+[Quality gates](#quality-gates) · [Getting started](#getting-started) · [Team](#team)
 
-| Area | Routes |
+## Why
+
+Relocation tools are split in two. Visa platforms (Boundless, Alma, Deel, Atlys) do not teach
+the language; language apps (Speak, Praktika, Duolingo) do not know what the visa requires.
+Many routes have a language condition — a spouse visa, a job-seeker card, a university place.
+GlobalLife starts from the target visa and works backwards to the language plan.
+
+Every visa rule, fee or duration shown to a user carries a link to its official source and the
+date it was last checked. A rule without a source is not shown.
+
+## Codebase at a glance
+
+Measured in October 2026, with the contribution setup (#1) and the test setup (#40) in place.
+
+| Metric | Value |
 |---|---|
-| Visa | `/visa` · `/visa/countries` · `/visa/documents` · `/visa/roadmap` · `/visa/chat` |
-| Language | `/language` · `/language/lesson` · `/language/ielts` · `/language/progress` |
-| Account | `/assistant` · `/stats` · `/settings` · `/support` · `/support/voice` |
+| TypeScript / TSX in `src/` | 7,125 lines (14 of them tests) |
+| Routes (`page.tsx`) | 18 |
+| React components | 27 |
+| Locales | 4 (TR, EN, DE, PL) — one dictionary in `src/lib/i18n.ts`, falls back to English; most screens not wired yet ([#8](https://github.com/Tunaycel/Global-Life-Ai/issues/8)) |
+| API routes | 1 (NextAuth) |
+| Runtime / dev dependencies | 20 / 11 |
+| Automated tests | 3 — 2 unit tests (Vitest) and 1 smoke test of the production build (Playwright) |
+| Lint | 15 errors, 46 warnings — tracked in [#2](https://github.com/Tunaycel/Global-Life-Ai/issues/2) |
+| CI | typecheck, unit tests, production build and smoke test on every PR |
 
-Plus a marketing landing page and a three-step auth flow (`/auth/login`, `/auth/register`,
-`/auth/onboarding`).
+## What works today
 
-## Authentication
+| Area | State | Tracking |
+|---|---|---|
+| Google sign-in, session with stable user id | **Working** | — |
+| Dashboard route guard | Missing | [#4](https://github.com/Tunaycel/Global-Life-Ai/issues/4) |
+| Landing, dashboard, 3D scenes, transitions, responsive layout | **Working** (static content) | [#3](https://github.com/Tunaycel/Global-Life-Ai/issues/3) removes unverifiable claims |
+| Visa guide, roadmap, documents | Designed, hardcoded data | [M2](https://github.com/Tunaycel/Global-Life-Ai/milestone/2) |
+| AI assistant (three chat UIs) | Scripted replies, no model call | [M3](https://github.com/Tunaycel/Global-Life-Ai/milestone/3) |
+| Lessons, IELTS practice, progress, stats | Designed, hardcoded data | [M4](https://github.com/Tunaycel/Global-Life-Ai/milestone/4) |
+| Database, storage, reminders | Not started | [#20](https://github.com/Tunaycel/Global-Life-Ai/issues/20), [#23](https://github.com/Tunaycel/Global-Life-Ai/issues/23), [#28](https://github.com/Tunaycel/Global-Life-Ai/issues/28) |
 
-NextAuth with the Google provider. Two callbacks do the work worth noting:
+## Architecture
 
-```ts
-async session({ session, token }) {
-    if (session.user) {
-        (session.user as Record<string, unknown>).id = token.sub;
-    }
-    return session;
-}
+**Today**
+
+```mermaid
+flowchart LR
+    B[Browser] --> N[Next.js App Router]
+    N --> P[Pages and components<br/>hardcoded data]
+    N --> A["/api/auth (NextAuth)"]
+    A --> G[(Google OAuth)]
 ```
 
-NextAuth does not put the account id on the session by default, so `token.sub` is copied onto
-`session.user.id` — without it the client has an email and no stable key to hang anything off.
+**Target** — screens never talk to the database directly. They call typed functions in `src/lib/`
+(the data-layer contract, [ADR 0003](docs/adr/0003-data-layer-contract.md)); those return mock
+data first and real data once the back end is wired, without screen changes.
 
-The `redirect` callback keeps sign-in returns on-origin: relative URLs are resolved against
-`baseUrl`, same-origin absolute URLs pass through, and anything else falls back to
-`/dashboard`. That last branch is the point — it means a crafted `callbackUrl` cannot bounce a
-signed-in user off to another host.
-
-## 3D and motion
-
-`three` driven directly rather than through a renderer abstraction, in four scene components:
-
-- `Globe3D` — the landing hero
-- `ParticleField` — ambient background points
-- `SceneAuthentication` / `SceneBackground` — scene wrappers per context
-
-`Scene3DWrapper` isolates the canvas so the WebGL context mounts once and the surrounding React
-tree can re-render without tearing it down. Page transitions and micro-interactions are Framer
-Motion; UI primitives are Radix, styled with Tailwind and merged through `tailwind-merge`.
-
-## Internationalisation
-
-Four locales — Turkish, English, German, Polish — in `src/lib/i18n.ts`. Translations are typed
-as a nested object keyed by locale rather than flat string ids:
-
-```ts
-nav: {
-    features: { tr: "Özellikler", en: "Features", de: "Funktionen", pl: "Funkcje" },
-}
+```mermaid
+flowchart LR
+    B[Browser] --> N[Next.js App Router]
+    N --> UI[Pages and components]
+    UI --> L[src/lib contract<br/>typed async functions]
+    L --> DB[(Postgres)]
+    L --> S[(File storage<br/>visa documents)]
+    N --> API[Route handlers]
+    API --> AI[Model API<br/>streaming, rate-limited]
+    AI --> SRC[Sourced visa data<br/>citations]
+    API --> AUTH[Auth + DB adapter]
+    CRON[Scheduled jobs] --> MAIL[Reminder email]
 ```
 
-The trade-off is deliberate: TypeScript catches a missing translation at compile time, because
-a locale key absent from the object is a type error rather than a silent fallback at runtime.
-It does not scale to a translator workflow, which would want extracted message files.
+Key decisions are recorded as ADRs in [`docs/adr`](docs/adr).
 
-## State
+## Roadmap
 
-Zustand for cross-route client state. No server state library — there is no server state yet.
+| Milestone | Scope | Progress |
+|---|---|---|
+| [M1 Foundation](https://github.com/Tunaycel/Global-Life-Ai/milestone/1) | lint, auth guard, data contract, database, tests | ![M1 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/1?label=) |
+| [M2 Visa core](https://github.com/Tunaycel/Global-Life-Ai/milestone/2) | eligibility engine, sourced data for DE / PL / NL, roadmap, documents | ![M2 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/2?label=) |
+| [M3 AI assistant](https://github.com/Tunaycel/Global-Life-Ai/milestone/3) | one assistant, real model, answers cite sources | ![M3 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/3?label=) |
+| [M4 Language](https://github.com/Tunaycel/Global-Life-Ai/milestone/4) | lessons, progress, speaking and IELTS practice | ![M4 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/4?label=) |
+| [M5 Quality and launch](https://github.com/Tunaycel/Global-Life-Ai/milestone/5) | i18n, accessibility, performance, monitoring, privacy | ![M5 progress](https://img.shields.io/github/milestones/progress-percent/Tunaycel/Global-Life-Ai/5?label=) |
 
----
+## Engineering process
 
-## Status
+```
+Issue → branch → commits → local checks + two reviews → draft PR
+      → CI + CodeRabbit → owner review → squash merge → issue closes
+```
 
-What is wired:
+- **Every change starts as an issue** with acceptance criteria ([templates](.github/ISSUE_TEMPLATE)).
+- **One issue, one branch, one PR.** Branches are `<user>/<issue>-<short-name>`.
+- **Before every push:** typecheck, lint, build, and two independent code reviews; every real
+  finding is fixed and the checks run again.
+- **Design first for anything non-trivial:** a short [design doc](docs/templates/design-doc.md);
+  lasting decisions become an [ADR](docs/templates/adr.md).
+- **Incidents** get a blameless [postmortem](docs/templates/postmortem.md); releases follow the
+  [release checklist](docs/templates/release-checklist.md) and land in the [changelog](CHANGELOG.md).
 
-- Google OAuth sign-in, session handling, protected dashboard routes
-- All screens, 3D scenes, transitions, responsive layouts
-- Locale switching across four languages
+The full workflow is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-What is not:
+## Quality gates
 
-- **The support chatbot is scripted.** `AIChatBot.tsx` matches the first and last word of the
-  input against a map of five canned answers and replies after a `setTimeout` that imitates
-  typing latency. There is no model call.
-- `@ai-sdk/openai` and `ai` are in `package.json` but not imported anywhere. They were added
-  for the integration that has not happened.
-- Visa roadmaps, document checklists, lessons and IELTS practice render static content. There
-  is no backend and no database.
+Enforced by GitHub on `master` unless noted ([rulesets as code](.github/rulesets), [ADR 0002](docs/adr/0002-split-rulesets.md)):
 
-Wiring the chatbot to a real model is the next step; the SDK is already a dependency and the
-only API route in the project is NextAuth's.
+| Gate | Applies to |
+|---|---|
+| No direct or force pushes, branch cannot be deleted | everyone, including the owner |
+| Pull request required, squash merge only | everyone |
+| CI `Typecheck and build` green on an up-to-date branch | everyone |
+| All review threads resolved (including CodeRabbit's) | everyone |
+| Code-owner approval on the latest push; stale approvals dismissed | every PR the owner did not open — the owner can bypass, by agreement only on their own PRs ([ADR 0002](docs/adr/0002-split-rulesets.md)) |
+| Only the owner updates `master` | everyone else |
 
----
+## Getting started
 
-## Running it
+Requirements: Node.js 20.9+ (CI uses 24), npm.
 
 ```bash
-git clone https://github.com/Tunaycel/globallife
-cd globallife
+git clone https://github.com/Tunaycel/Global-Life-Ai
+cd Global-Life-Ai
 npm install
 ```
 
@@ -122,17 +157,27 @@ NEXTAUTH_URL=http://localhost:3000
 Google credentials come from a Google Cloud OAuth client with
 `http://localhost:3000/api/auth/callback/google` as an authorised redirect URI.
 
-```bash
-npm run dev     # http://localhost:3000
-npm run build
-```
-
-## Tests
-
-```bash
-npm test                                  # unit tests (Vitest), *.test.ts next to the code in src/
-npm run build && npm run test:e2e         # smoke test of the production build (Playwright), e2e/
-```
+| Command | What it does |
+|---|---|
+| `npm run dev` | dev server on http://localhost:3000 |
+| `npx tsc --noEmit` | typecheck |
+| `npm run lint` | ESLint |
+| `npm run build` | production build |
+| `npm test` | unit tests (Vitest), `*.test.ts` next to the code in `src/` |
+| `npm run build && npm run test:e2e` | smoke test of the production build (Playwright), `e2e/` |
 
 The first Playwright run needs a browser: `npx playwright install chromium`. CI runs both in the
 `Typecheck and build` job.
+
+## Team
+
+| | Role | Owns |
+|---|---|---|
+| [@Tunaycel](https://github.com/Tunaycel) | Team lead | back end, database, cloud, reviews and merges |
+| [@ardasemihyy](https://github.com/ardasemihyy) | Engineer | front end, data-layer contract, eligibility engine, i18n, accessibility |
+| [@egezamb](https://github.com/egezamb) | Engineer | infrastructure and tests |
+
+## Security and license
+
+Report vulnerabilities privately — see [SECURITY.md](SECURITY.md).
+Released under the [MIT License](LICENSE).
