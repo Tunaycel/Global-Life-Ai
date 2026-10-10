@@ -57,7 +57,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 {(!collapsed || mobile) && (
                     <div>
                         <span className="font-bold text-sm text-white tracking-tight">GlobalLife AI</span>
-                        <p className="text-[10px] text-white/30 font-medium uppercase tracking-wider">Premium</p>
                     </div>
                 )}
             </div>
