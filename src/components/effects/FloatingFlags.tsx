@@ -20,22 +20,28 @@ interface FlagItem {
     rotation: number;
 }
 
+function makeFlags(): FlagItem[] {
+    return FLAGS.map((emoji, i) => ({
+        emoji,
+        x: Math.random() * 100,
+        y: 5 + (i / FLAGS.length) * 90,
+        size: 20 + Math.random() * 24,
+        speed: 15 + Math.random() * 25,
+        drift: 20 + Math.random() * 40,
+        delay: Math.random() * 10,
+        opacity: 0.08 + Math.random() * 0.12,
+        rotation: Math.random() * 30 - 15,
+    }));
+}
+
 export default function FloatingFlags() {
     const [flags, setFlags] = useState<FlagItem[]>([]);
 
+    // Random positions only on the client (the server render would not match),
+    // set on the next frame instead of synchronously inside the effect.
     useEffect(() => {
-        const items: FlagItem[] = FLAGS.map((emoji, i) => ({
-            emoji,
-            x: Math.random() * 100,
-            y: 5 + (i / FLAGS.length) * 90,
-            size: 20 + Math.random() * 24,
-            speed: 15 + Math.random() * 25,
-            drift: 20 + Math.random() * 40,
-            delay: Math.random() * 10,
-            opacity: 0.08 + Math.random() * 0.12,
-            rotation: Math.random() * 30 - 15,
-        }));
-        setFlags(items);
+        const frame = requestAnimationFrame(() => setFlags(makeFlags()));
+        return () => cancelAnimationFrame(frame);
     }, []);
 
     if (flags.length === 0) return null;

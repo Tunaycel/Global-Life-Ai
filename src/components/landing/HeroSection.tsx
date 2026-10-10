@@ -49,7 +49,7 @@ export default function HeroSection() {
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00DC82]" />
                         </span>
                         <span className="text-sm tracking-wider font-medium uppercase" style={{ color: "rgba(0,220,130,0.7)" }}>
-              // {t("hero", "tag") as string}
+              {"// "}{t("hero", "tag") as string}
                         </span>
                     </motion.div>
 
