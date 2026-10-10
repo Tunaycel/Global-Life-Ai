@@ -248,7 +248,7 @@ export default function OnboardingPage() {
                                 </motion.div>
                                 <h2 className="text-h2 text-[var(--text-primary)] mb-2">Planın Hazır!</h2>
                                 <p className="text-body text-[var(--text-secondary)] mb-6">
-                                    {name ? `${name}, ` : ""}AI'mız sana özel bir öğrenme planı oluşturdu
+                                    {name ? `${name}, ` : ""}AI&apos;mız sana özel bir öğrenme planı oluşturdu
                                 </p>
 
                                 <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-5 text-left mb-6 space-y-3">
@@ -271,7 +271,7 @@ export default function OnboardingPage() {
                                 </div>
 
                                 <Link href="/dashboard" className="btn-primary !w-full shimmer !py-3">
-                                    Dashboard'a Git 🚀
+                                    Dashboard&apos;a Git 🚀
                                 </Link>
                             </motion.div>
                         )}
