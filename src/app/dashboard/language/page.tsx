@@ -7,7 +7,7 @@ import {
     CheckCircle2, Circle, MoreHorizontal, Trophy
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type SVGProps } from "react";
 
 const fadeInUp = {
     initial: { opacity: 0, y: 16 },
@@ -307,7 +307,7 @@ export default function LanguageLabPage() {
 }
 
 /* ── HELPERS ── */
-function AudioLines(props: any) {
+function AudioLines(props: SVGProps<SVGSVGElement>) {
     return (
         <svg
             {...props}
@@ -331,7 +331,7 @@ function AudioLines(props: any) {
     )
 }
 
-function UserCircle(props: any) {
+function UserCircle(props: SVGProps<SVGSVGElement>) {
     return (
         <svg
             {...props}

@@ -161,8 +161,10 @@ const translations = {
 
 export type TranslationKey = keyof typeof translations;
 
+type Entry = Partial<Record<Locale, string | string[]>>;
+
 export function t(section: string, key: string, locale: Locale): string | string[] {
-    const sec = (translations as any)[section];
+    const sec = (translations as unknown as Record<string, Record<string, Entry | undefined> | undefined>)[section];
     if (!sec) return key;
     const entry = sec[key];
     if (!entry) return key;

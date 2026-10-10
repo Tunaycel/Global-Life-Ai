@@ -3,7 +3,10 @@
 import { motion } from "framer-motion";
 import { CheckCircle, Circle, ArrowRight } from "lucide-react";
 
-const phases = [
+type Step = { text: string; done: boolean; current?: boolean };
+type Phase = { title: string; status: string; steps: Step[] };
+
+const phases: Phase[] = [
     {
         title: "Hazırlık",
         status: "completed",
@@ -141,12 +144,12 @@ export default function RoadmapPage() {
                                             {step.done ? (
                                                 <CheckCircle className="w-4 h-4 text-[#30D158] shrink-0" />
                                             ) : (
-                                                <Circle className={`w-4 h-4 shrink-0 ${(step as any).current ? "text-[#0A84FF]" : "text-[var(--text-tertiary)]"}`} />
+                                                <Circle className={`w-4 h-4 shrink-0 ${step.current ? "text-[#0A84FF]" : "text-[var(--text-tertiary)]"}`} />
                                             )}
-                                            <span className={`text-sm ${step.done ? "text-[var(--text-secondary)] line-through" : (step as any).current ? "text-[var(--color-primary)] font-medium" : "text-[var(--text-primary)]"}`}>
+                                            <span className={`text-sm ${step.done ? "text-[var(--text-secondary)] line-through" : step.current ? "text-[var(--color-primary)] font-medium" : "text-[var(--text-primary)]"}`}>
                                                 {step.text}
                                             </span>
-                                            {(step as any).current && (
+                                            {step.current && (
                                                 <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-[#0A84FF]/10 text-[#0A84FF] font-semibold">
                                                     Şu an
                                                 </span>
