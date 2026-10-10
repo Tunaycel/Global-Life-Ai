@@ -1,0 +1,29 @@
+# Weekly dependency updates as small PRs. Minor and patch npm updates arrive together,
+# majors one by one, GitHub Actions in their own PR.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Istanbul
+    open-pull-requests-limit: 5
+    labels: [dependencies]
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Istanbul
+    open-pull-requests-limit: 5
+    labels: [dependencies]
+    groups:
+      github-actions:
+        patterns: ["*"]
