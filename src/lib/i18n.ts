@@ -12,7 +12,6 @@ const translations = {
         features: { tr: "Özellikler", en: "Features", de: "Funktionen", pl: "Funkcje" },
         language: { tr: "Dil Öğrenme", en: "Language Learning", de: "Sprachlernen", pl: "Nauka Języków" },
         visa: { tr: "Vize Danışmanlık", en: "Visa Consulting", de: "Visaberatung", pl: "Doradztwo Wizowe" },
-        pricing: { tr: "Fiyatlandırma", en: "Pricing", de: "Preise", pl: "Cennik" },
         about: { tr: "Hakkımızda", en: "About", de: "Über uns", pl: "O nas" },
         login: { tr: "Giriş Yap", en: "Sign In", de: "Anmelden", pl: "Zaloguj się" },
         getStarted: { tr: "Ücretsiz Başla", en: "Start Free", de: "Kostenlos starten", pl: "Zacznij za darmo" },
@@ -50,14 +49,6 @@ const translations = {
             en: "active users",
             de: "aktive Nutzer",
             pl: "aktywnych użytkowników",
-        },
-    },
-    trusted: {
-        title: {
-            tr: "Dünyanın Önde Gelen Kurumları Tarafından Tercih Ediliyor",
-            en: "Trusted by Leading Institutions Worldwide",
-            de: "Von führenden Institutionen weltweit vertraut",
-            pl: "Zaufanie wiodących instytucji na całym świecie",
         },
     },
     problem: {
@@ -135,12 +126,6 @@ const translations = {
                 "Śledzenie wyników i optymalizacja oparta na danych",
             ],
         },
-    },
-    stats: {
-        users: { tr: "Aktif Kullanıcı", en: "Active Users", de: "Aktive Nutzer", pl: "Aktywni Użytkownicy" },
-        lessons: { tr: "AI Ders Tamamlandı", en: "AI Lessons Completed", de: "KI-Lektionen abgeschlossen", pl: "Ukończone lekcje AI" },
-        satisfaction: { tr: "Kullanıcı Memnuniyeti", en: "User Satisfaction", de: "Nutzerzufriedenheit", pl: "Zadowolenie Użytkowników" },
-        countries: { tr: "Desteklenen Ülke", en: "Countries Supported", de: "Unterstützte Länder", pl: "Obsługiwane Kraje" },
     },
     cta: {
         title: {
