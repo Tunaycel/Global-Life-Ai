@@ -125,7 +125,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                         )}
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-white truncate">{userName}</p>
-                            <p className="text-[10px] font-semibold tracking-wider" style={{ color: "#0A84FF" }}>PRO PLAN</p>
                         </div>
                         <button
                             onClick={() => signOut({ callbackUrl: "/" })}
