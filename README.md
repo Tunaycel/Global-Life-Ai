@@ -36,16 +36,16 @@ date it was last checked. A rule without a source is not shown.
 
 ## Codebase at a glance
 
-Measured on `master`, October 2026.
+Measured in October 2026, with the contribution setup (#1) and the test setup (#40) in place.
 
 | Metric | Value |
 |---|---|
-| TypeScript / TSX in `src/` | 7,111 lines |
+| TypeScript / TSX in `src/` | 7,125 lines (14 of them tests) |
 | Routes (`page.tsx`) | 18 |
 | React components | 27 |
 | Locales | 4 (TR, EN, DE, PL) — one dictionary in `src/lib/i18n.ts`, falls back to English; most screens not wired yet ([#8](https://github.com/Tunaycel/Global-Life-Ai/issues/8)) |
 | API routes | 1 (NextAuth) |
-| Runtime / dev dependencies | 20 / 9 |
+| Runtime / dev dependencies | 20 / 11 |
 | Automated tests | 3 — 2 unit tests (Vitest) and 1 smoke test of the production build (Playwright) |
 | Lint | 15 errors, 46 warnings — tracked in [#2](https://github.com/Tunaycel/Global-Life-Ai/issues/2) |
 | CI | typecheck, unit tests, production build and smoke test on every PR |

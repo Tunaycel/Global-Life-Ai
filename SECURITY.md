@@ -2,9 +2,10 @@
 
 ## Reporting a vulnerability
 
-Please do not open a public issue. Use GitHub's
-[private vulnerability reporting](https://github.com/Tunaycel/Global-Life-Ai/security/advisories/new)
-with steps to reproduce and the impact you expect. You will get an answer within 7 days.
+Please do not put details in a public issue. Open an issue titled "Security contact" with no
+details, and @Tunaycel will reply with a private channel for the report. Include steps to
+reproduce and the impact you expect once you have that channel. You will get an answer within
+7 days.
 
 ## Scope
 
