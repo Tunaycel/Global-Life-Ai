@@ -44,12 +44,6 @@ const translations = {
             de: "Keine Kreditkarte erforderlich — In 60 Sekunden starten",
             pl: "Karta kredytowa nie jest wymagana — Zacznij w 60 sekund",
         },
-        users: {
-            tr: "aktif kullanıcı",
-            en: "active users",
-            de: "aktive Nutzer",
-            pl: "aktywnych użytkowników",
-        },
     },
     problem: {
         title: {
