@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { defineConfig, devices } from "@playwright/test";
 
 const port = Number(process.env.PORT ?? 3000);
@@ -20,7 +21,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
     // NextAuth refuses to answer /api/auth/session without a secret and logs NO_SECRET on every page.
-    // A throwaway value is enough for signed-out pages; a real NEXTAUTH_SECRET in the environment wins.
-    env: { NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ?? "e2e-only-not-a-real-secret" },
+    // A random one per run is enough for signed-out pages; a real NEXTAUTH_SECRET in the environment wins.
+    env: { NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ?? randomBytes(32).toString("hex") },
   },
 });

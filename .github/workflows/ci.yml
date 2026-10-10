@@ -29,10 +29,11 @@ jobs:
       - name: Install Playwright's Chromium
         run: npx playwright install --with-deps chromium
       - name: Smoke test the production build
+        id: smoke
         run: npx playwright test
       - name: Keep the Playwright trace when the smoke test fails
-        if: failure()
-        uses: actions/upload-artifact@v4
+        if: failure() && steps.smoke.outcome == 'failure'
+        uses: actions/upload-artifact@v5
         with:
           name: playwright-results
           path: test-results/
