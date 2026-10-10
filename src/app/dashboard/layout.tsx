@@ -208,7 +208,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                             <h1 className="text-lg font-bold text-white leading-tight">
                                 Merhaba, {userName.split(" ")[0]}!
                             </h1>
-                            <p className="text-[10px] text-white/30 font-medium mt-0.5 uppercase tracking-wider">
+                            <p className="text-xs text-white/30 font-medium mt-0.5">
                                 {new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
                             </p>
                         </div>
