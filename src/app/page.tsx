@@ -12,7 +12,6 @@ import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTASection from "@/components/landing/FinalCTASection";
 import Scene3DWrapper from "@/components/3d/Scene3DWrapper";
-import FloatingFlagsWrapper from "@/components/effects/FloatingFlagsWrapper";
 import ChatBotWrapper from "@/components/chat/ChatBotWrapper";
 
 export default function Home() {
@@ -20,9 +19,6 @@ export default function Home() {
     <main className="relative">
       {/* Full-page 3D background */}
       <Scene3DWrapper />
-
-      {/* Floating country flags */}
-      <FloatingFlagsWrapper />
 
       {/* Content layers above the 3D scene */}
       <div className="relative z-10">
