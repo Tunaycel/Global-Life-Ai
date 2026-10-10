@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import MatrixRain from "@/components/effects/MatrixRain";
 
 // Dynamically import Globe3D to avoid SSR issues
 const Globe3D = dynamic(() => import("@/components/3d/Globe3D"), {
@@ -14,11 +13,6 @@ export default function SceneAuthentication() {
         <div className="absolute inset-0 w-full h-full overflow-hidden bg-[#030308] z-0">
             {/* Background radial glow - Softer, more spread out */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#00DC82]/5 via-[#030308]/60 to-[#030308] pointer-events-none z-0" />
-
-            {/* Layer 1: Matrix Rain Background - Reduced Opacity for Softness */}
-            <div className="opacity-20 blur-[1px]">
-                <MatrixRain />
-            </div>
 
             {/* Layer 2: Vignette Overlay - Deep Gradient for focus */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#030308] via-transparent to-[#030308]/80 pointer-events-none z-10" />
