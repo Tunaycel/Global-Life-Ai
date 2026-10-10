@@ -63,11 +63,11 @@ Three rulesets, so the owner's rights never switch off CI or the PR flow:
   all review threads resolved; CI (`Typecheck and build` and `Task gate`, from GitHub
   Actions) green on a branch up to date with `master`; squash merge only.
 - **Owner approval**: one code-owner approval on the latest push, stale approvals dismissed.
-  GitHub does not let anyone approve their own PR, so the admin can bypass this rule
+  GitHub does not let anyone approve their own PR, so the owner's account can bypass this rule
   (through a PR only). Technically that works on any PR; by agreement the owner uses it only
   on their own PRs and approves everyone else's before merging.
-- **Only the owner merges**: nobody can update `master` except the repository admin,
-  and the admin only through a pull request. Merging a PR counts as an update, so a
+- **Only the owner merges**: nobody can update `master` except the owner's account,
+  and only through a pull request. Merging a PR counts as an update, so a
   collaborator can never merge, even with an approval.
 
 ## Content rules
