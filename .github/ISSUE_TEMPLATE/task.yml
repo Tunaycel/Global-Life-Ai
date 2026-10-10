@@ -1,0 +1,30 @@
+name: Task
+description: A piece of work with a clear finish line
+labels: ["task"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should be true when this is done?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: A checklist the reviewer can verify one by one.
+      placeholder: |
+        - [ ] The wizard asks for citizenship and destination
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Out of scope
+      description: What this task deliberately does not cover.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Links, files to look at, open questions.
