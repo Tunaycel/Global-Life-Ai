@@ -21,7 +21,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
     // NextAuth refuses to answer /api/auth/session without a secret and logs NO_SECRET on every page.
-    // A random one per run is enough for signed-out pages; a real NEXTAUTH_SECRET in the environment wins.
+    // A random one per run is enough for signed-out pages; a NEXTAUTH_SECRET exported in the shell wins.
     env: { NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ?? randomBytes(32).toString("hex") },
   },
 });
