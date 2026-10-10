@@ -5,9 +5,7 @@ on:
     - cron: "17 * * * *"
   workflow_dispatch:
 
-permissions:
-  contents: read
-  issues: write
+permissions: {}
 
 concurrency:
   group: welcome
@@ -17,6 +15,8 @@ jobs:
   welcome:
     name: Open onboarding issues
     runs-on: ubuntu-latest
+    permissions:
+      issues: write # open and assign onboarding issues; collaborators are read with metadata access
     steps:
       - uses: actions/github-script@v7
         with:

@@ -35,9 +35,13 @@ async function request(url, attempt = 0) {
       "X-GitHub-Api-Version": "2022-11-28",
     },
   });
-  // Secondary rate limits answer 403/429 with retry-after; wait and try again twice.
-  if ((res.status === 403 || res.status === 429) && res.headers.get("retry-after") && attempt < 2) {
-    await new Promise((done) => setTimeout(done, Math.min(Number(res.headers.get("retry-after")), 60) * 1000));
+  // Secondary rate limits answer 403/429 with retry-after (seconds or an HTTP date); wait and
+  // try again twice. Anything unreadable waits the full minute instead of retrying at once.
+  const retryAfter = res.headers.get("retry-after");
+  if ((res.status === 403 || res.status === 429) && retryAfter && attempt < 2) {
+    const seconds = /^\d+$/.test(retryAfter.trim()) ? Number(retryAfter) : (Date.parse(retryAfter) - Date.now()) / 1000;
+    const wait = Number.isFinite(seconds) ? Math.min(Math.max(seconds, 1), 60) : 60;
+    await new Promise((done) => setTimeout(done, wait * 1000));
     return request(url, attempt + 1);
   }
   if (!res.ok) {
