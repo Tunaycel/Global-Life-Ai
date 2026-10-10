@@ -1,6 +1,6 @@
 # ADR 0002: Enforce the workflow with three rulesets
 
-- **Status:** accepted
+- **Status:** accepted; partly superseded by [ADR 0004](0004-simplify-the-workflow.md)
 - **Date:** 2026-10-10
 - **Deciders:** @Tunaycel
 - **Issue / PR:** #1
