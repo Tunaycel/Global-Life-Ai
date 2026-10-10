@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import EmptyState from "@/components/ui/EmptyState";
+import { useLocale } from "@/components/providers/LocaleProvider";
 import { Upload, FileText, Image, CheckCircle, AlertCircle, Clock, Eye, Trash2, Plus } from "lucide-react";
 
 const documents = [
@@ -22,6 +23,8 @@ const statusConfig: Record<string, { label: string; color: string; icon: typeof 
 };
 
 export default function DocumentsPage() {
+    const { t } = useLocale();
+
     return (
         <div className="max-w-[900px] mx-auto space-y-6">
             <div className="flex items-center justify-between">
@@ -62,9 +65,9 @@ export default function DocumentsPage() {
                 {documents.length === 0 && (
                     <EmptyState
                         icon={FileText}
-                        title="Henüz belge yüklemedin."
-                        description="Vize başvurun için gereken belgeleri buraya ekleyebilirsin."
-                        action={{ label: "İlk belgeni yükle", href: "#upload" }}
+                        title={t("states", "documentsTitle") as string}
+                        description={t("states", "documentsDescription") as string}
+                        action={{ label: t("states", "documentsAction") as string, href: "#upload" }}
                     />
                 )}
                 {documents.map((doc, i) => {
