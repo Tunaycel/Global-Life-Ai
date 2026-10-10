@@ -17,9 +17,12 @@ Three branch rulesets on the default branch, stored as JSON in `.github/rulesets
 
 1. **Protect master**, no bypass: PR required, CI green and up to date, threads resolved,
    squash only, no force push or deletion.
-2. **Owner approval**, admin bypass through PRs only: code-owner approval on the latest push,
+2. **Owner approval**, bypass for the owner's account (by user id) through PRs only: code-owner approval on the latest push,
    stale approvals dismissed. The lead bypasses it on their own PRs only.
-3. **Only the owner merges**, admin bypass through PRs only: the `update` rule.
+3. **Only the owner merges**, bypass for the owner's account through PRs only: the `update` rule.
+
+The bypass names the owner's account rather than the admin role, so a future admin would not
+inherit it.
 
 ## Alternatives considered
 
