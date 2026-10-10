@@ -12,6 +12,9 @@ const avatars = [
     { name: "Hans", accent: "Almanca", emoji: "👨", active: false },
 ];
 
+// Picked once when the module loads, so the bars keep their height across renders.
+const waveHeights = Array.from({ length: 40 }, () => Math.random() * 24 + 4);
+
 export default function LessonPage() {
     const [isRecording, setIsRecording] = useState(false);
     const [messages, setMessages] = useState([
@@ -107,7 +110,7 @@ export default function LessonPage() {
                                 key={i}
                                 className="w-1 rounded-full bg-[var(--color-primary)]"
                                 animate={{
-                                    height: [4, Math.random() * 24 + 4, 4],
+                                    height: [4, waveHeights[i], 4],
                                 }}
                                 transition={{
                                     duration: 0.5,

@@ -37,6 +37,10 @@ function getAIResponse(input: string): string {
     return "Thanks for your question! Our team would love to help. For detailed inquiries, you can reach us at support@globallife.ai or start a free trial to explore the platform yourself. Is there anything specific about our language learning or visa consulting services I can help with?";
 }
 
+function replyDelay(): number {
+    return 800 + Math.random() * 1200;
+}
+
 export default function AIChatBot() {
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
@@ -59,7 +63,7 @@ export default function AIChatBot() {
         setTimeout(() => {
             setTyping(false);
             setMessages((prev) => [...prev, { role: "ai", text: getAIResponse(text) }]);
-        }, 800 + Math.random() * 1200);
+        }, replyDelay());
     };
 
     return (

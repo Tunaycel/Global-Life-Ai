@@ -4,6 +4,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Phone, Video, MicOff, VideoOff, PhoneOff, MessageCircle, Volume2, Settings } from "lucide-react";
 
+// Picked once when the module loads, so the bars keep their height across renders.
+const waveHeights = Array.from({ length: 30 }, () => Math.random() * 30 + 6);
+
 export default function VoiceSupportPage() {
     const [callActive, setCallActive] = useState(false);
     const [muted, setMuted] = useState(false);
@@ -105,7 +108,7 @@ export default function VoiceSupportPage() {
                                     key={i}
                                     className="w-1 rounded-full bg-[#0A84FF]"
                                     animate={{
-                                        height: [6, Math.random() * 30 + 6, 6],
+                                        height: [6, waveHeights[i], 6],
                                     }}
                                     transition={{
                                         duration: 0.6,
