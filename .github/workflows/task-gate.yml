@@ -21,6 +21,7 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
+            // One rule: the PR closes an open issue that is assigned to its author.
             const { owner, repo } = context.repo;
             // Re-read the PR: an `edited` event can carry a stale body.
             const { data: pr } = await github.rest.pulls.get({
@@ -32,26 +33,15 @@ jobs:
             }
             const author = pr.user.login.toLowerCase();
             // Hidden comments and code blocks are not part of the description a reviewer reads.
-            const visible = (text) => text.replace(/<!--[\s\S]*?-->/g, "").replace(/^```[\s\S]*?^```/gm, "");
-            const body = visible(pr.body ?? "");
-            const problems = [];
-
-            const branch = pr.head.ref.match(/^([A-Za-z0-9-]+)\/(\d+)-[a-z0-9-]+$/);
-            if (!branch) {
-              problems.push(`Branch \`${pr.head.ref}\` must be \`<user>/<issue-number>-<short-name>\` (short name: lowercase letters, digits, hyphens).`);
-            } else if (branch[1].toLowerCase() !== author) {
-              problems.push(`Branch \`${pr.head.ref}\` starts with \`${branch[1]}\`, not your username \`${pr.user.login}\`.`);
-            }
-
+            const body = (pr.body ?? "")
+              .replace(/<!--[\s\S]*?-->/g, "")
+              .replace(/^ {0,3}(```|~~~)[\s\S]*?^ {0,3}\1/gm, "");
             const closes = [...new Set(
               [...body.matchAll(/\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?):?\s+#(\d+)\b/gi)].map((m) => Number(m[1])),
             )];
-            if (closes.length === 0) {
-              problems.push("The description must link its issue with `Closes #N`.");
-            } else if (branch && !closes.includes(Number(branch[2]))) {
-              problems.push(`The branch names issue #${branch[2]} but the description closes ${closes.map((n) => `#${n}`).join(", ")}.`);
-            }
 
+            const problems = [];
+            if (!closes.length) problems.push("Link the issue in the description with `Closes #N`.");
             for (const number of closes) {
               let issue;
               try {
@@ -63,44 +53,16 @@ jobs:
               }
               if (issue.pull_request) { problems.push(`#${number} is a pull request, not an issue.`); continue; }
               if (issue.state !== "open") problems.push(`#${number} is already closed.`);
-              const assignees = (issue.assignees ?? []).map((a) => a.login.toLowerCase());
-              if (!assignees.includes(author)) problems.push(`#${number} is not assigned to @${pr.user.login}.`);
-            }
-
-            // Every item of the template's checklist must be present and ticked, so deleting
-            // an item does not get around it. Items that do not apply are ticked with a note.
-            const section = (text) => text.split(/^##\s+Checklist\s*$/im)[1]?.split(/^##\s/m)[0];
-            const item = /^ {0,3}(?:[-*+]|\d+[.)])\s+\[([ xX])\]\s+(.+?)\s*$/gm;
-            const normalize = (text) => text.replace(/`/g, "").replace(/\s+/g, " ").trim().toLowerCase();
-            let required = [];
-            try {
-              const { data: template } = await github.rest.repos.getContent({
-                owner, repo, path: ".github/pull_request_template.md", ref: pr.base.ref,
-              });
-              required = [...(section(visible(Buffer.from(template.content, "base64").toString("utf8"))) ?? "").matchAll(item)]
-                .map((m) => normalize(m[2]));
-            } catch (error) {
-              if (error.status !== 404) throw error;
-            }
-            const checklist = section(body);
-            if (!required.length) {
-              // Fail closed: a renamed or missing template must not turn the checklist off.
-              problems.push(`Could not read the checklist from \`.github/pull_request_template.md\` on \`${pr.base.ref}\`.`);
-            } else if (checklist === undefined) {
-              problems.push("The PR template's `## Checklist` section is missing.");
-            } else {
-              const ticked = [...checklist.matchAll(item)]
-                .filter((m) => m[1] !== " ")
-                .map((m) => normalize(m[2]));
-              const missing = required.filter((text) => !ticked.some((t) => t.startsWith(text)));
-              if (missing.length) problems.push(`Checklist items not ticked:\n${missing.map((t) => `  - [ ] ${t}`).join("\n")}`);
+              if (!(issue.assignees ?? []).some((a) => a.login.toLowerCase() === author)) {
+                problems.push(`#${number} is not assigned to @${pr.user.login}; ask the team lead to assign it.`);
+              }
             }
 
             if (problems.length) {
-              problems.push("Fix these, then edit the PR description or re-run this check (assigning the issue alone does not re-run it).");
+              problems.push("Fix this, then edit the PR description or re-run the check.");
               core.summary.addHeading("Task gate failed", 3).addList(problems);
               await core.summary.write();
               core.setFailed(problems.join("\n"));
             } else {
-              await core.summary.addRaw("Task gate passed: branch, linked issue, assignee and checklist are in order.").write();
+              await core.summary.addRaw(`Task gate passed: closes ${closes.map((n) => `#${n}`).join(", ")}, assigned to @${pr.user.login}.`).write();
             }

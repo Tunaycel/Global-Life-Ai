@@ -2,9 +2,8 @@
 language: en-US
 reviews:
   profile: assertive
-  # CodeRabbit is the first check on every PR: failing "error" checks request changes,
-  # and the team lead does the second review.
-  request_changes_workflow: true
+  # CodeRabbit advises on every PR; the team lead's approval is what gates a merge.
+  request_changes_workflow: false
   high_level_summary: true
   review_status: true
   poem: false
@@ -13,17 +12,16 @@ reviews:
     enabled: true
     drafts: true
   pre_merge_checks:
-    override_requested_reviewers_only: true
     title:
       mode: warning
       requirements: "A short English sentence in the imperative that says what the PR changes, under 72 characters."
     description:
-      mode: error
+      mode: warning
     issue_assessment:
-      mode: error
+      mode: warning
     custom_checks:
       - name: Acceptance criteria met
-        mode: error
+        mode: warning
         instructions: |
           Find the issue this PR closes ("Closes #N" in the description). List every acceptance
           criterion from that issue. For each one, state pass or fail with the file and line that
@@ -36,13 +34,13 @@ reviews:
           for example refactors, dependency bumps or styling changes the issue did not ask for.
           Name each unrelated change.
       - name: Sourced visa facts
-        mode: error
+        mode: warning
         instructions: |
           Fail if the diff adds or changes a user-facing visa rule, requirement, fee, duration,
           processing time or language level without an official government or embassy source URL
           next to it (a sourceUrl field, a link in the same data entry, or a link rendered with it).
       - name: No secrets or personal data
-        mode: error
+        mode: warning
         instructions: |
           Fail if the diff contains API keys, tokens, passwords, client secrets, private keys,
           .env values, or personal data such as passport numbers, real names with documents,

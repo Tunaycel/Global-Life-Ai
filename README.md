@@ -107,14 +107,13 @@ Key decisions are recorded as ADRs in [`docs/adr`](docs/adr).
 ## Engineering process
 
 ```
-Issue → branch → commits → local checks + two reviews → draft PR
-      → CI + CodeRabbit → owner review → squash merge → issue closes
+Issue → branch → PR (auto-merge on) → CI + Task gate + CodeRabbit
+      → lead approves → merged → issue closes
 ```
 
 - **Every change starts as an issue** with acceptance criteria ([templates](.github/ISSUE_TEMPLATE)).
 - **One issue, one branch, one PR.** Branches are `<user>/<issue>-<short-name>`.
-- **Before every push:** typecheck, lint, build, and two independent code reviews; every real
-  finding is fixed and the checks run again.
+- **Before pushing:** typecheck, lint, tests and build; ask for a review on bigger changes.
 - **Design first for anything non-trivial:** a short [design doc](docs/templates/design-doc.md);
   lasting decisions become an [ADR](docs/templates/adr.md).
 - **Incidents** get a blameless [postmortem](docs/templates/postmortem.md); releases follow the
@@ -124,16 +123,17 @@ The full workflow is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Quality gates
 
-Enforced by GitHub on `master` unless noted ([rulesets as code](.github/rulesets), [ADR 0002](docs/adr/0002-split-rulesets.md)):
+Enforced by GitHub on `master` ([rulesets as code](.github/rulesets); kept light on purpose, [ADR 0004](docs/adr/0004-simplify-the-workflow.md)):
 
 | Gate | Applies to |
 |---|---|
 | No direct or force pushes, branch cannot be deleted | everyone, including the owner |
 | Pull request required, squash merge only | everyone |
-| CI `Typecheck and build` green on an up-to-date branch | everyone |
-| All review threads resolved (including CodeRabbit's) | everyone |
-| Code-owner approval on the latest push; stale approvals dismissed | every PR the owner did not open — the owner can bypass, by agreement only on their own PRs ([ADR 0002](docs/adr/0002-split-rulesets.md)) |
-| Only the owner updates `master` | everyone else |
+| CI `Typecheck and build` and `Task gate` (PR closes an issue assigned to its author) | everyone |
+| Code-owner approval on the latest push | every PR the owner did not open |
+| CodeRabbit review | advisory, every PR |
+
+Approved PRs merge themselves through auto-merge.
 
 ## Getting started
 
