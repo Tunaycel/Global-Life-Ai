@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+reviews:
+  profile: assertive
+  request_changes_workflow: false
+  high_level_summary: true
+  review_status: true
+  poem: false
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: true
+  path_instructions:
+    - path: "src/**"
+      instructions: |
+        Next.js 16 App Router, React 19, TypeScript, NextAuth.
+        Flag: routes under /dashboard reachable without a session, secrets or tokens in client code,
+        user-facing visa rules, fees or durations without an official source link,
+        invented testimonials, logos, user counts or prices, and hardcoded UI text that bypasses src/lib/i18n.ts.
+    - path: ".github/**"
+      instructions: |
+        Workflows must keep least-privilege permissions and must not expose secrets to pull requests from forks.
+chat:
+  auto_reply: true

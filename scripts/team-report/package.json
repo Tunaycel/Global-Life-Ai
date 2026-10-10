@@ -1,0 +1,11 @@
+{
+  "name": "globallife-team-report",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "report": "node report.mjs"
+  },
+  "dependencies": {
+    "nodemailer": "10.0.10"
+  }
+}
