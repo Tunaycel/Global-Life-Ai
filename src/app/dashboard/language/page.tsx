@@ -173,7 +173,6 @@ export default function LanguageLabPage() {
                             <div className="w-10 h-10 rounded-xl bg-[#FFD60A]/10 border border-[#FFD60A]/20 flex items-center justify-center">
                                 <Trophy className="w-5 h-5 text-[#FFD60A]" />
                             </div>
-                            <span className="text-[9px] font-black text-[#FFD60A] uppercase tracking-wider px-2 py-1 rounded bg-[#FFD60A]/10">Premium</span>
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-white mb-1">IELTS Target 8.5</h3>
