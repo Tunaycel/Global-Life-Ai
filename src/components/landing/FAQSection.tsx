@@ -19,7 +19,7 @@ const faqs = [
     },
     {
         q: "Is my personal data secure?",
-        a: "Your data is stored with our database provider, Supabase, and always travels over an encrypted connection (HTTPS). We only use it to run your account.",
+        a: "Sign-in is handled by Supabase Auth. Our privacy policy will explain what we store and how we use it.",
     },
     {
         q: "How accurate is the IELTS score prediction?",
