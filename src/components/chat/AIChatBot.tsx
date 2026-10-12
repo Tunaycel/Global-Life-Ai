@@ -19,7 +19,7 @@ const aiResponses: Record<string, string> = {
     "what languages do you support?":
         "We currently support 10 languages: English, German, Polish, French, Spanish, Italian, Portuguese, Japanese, Korean, and Mandarin Chinese. Our AI tutors provide real-time conversation practice, pronunciation feedback, and adaptive lesson plans for each language.",
     "how does visa consulting work?":
-        "Our AI Visa Consultant looks at your profile and the requirements of the country you want to move to. It gives you a personal roadmap, a document checklist and step-by-step guidance.",
+        "The visa guide shows a roadmap and a document checklist for the country you want to move to.",
     "how does ai tutoring work?":
         "Our AI tutors use advanced language models to conduct real-time conversations at your proficiency level. They provide instant grammar corrections, pronunciation analysis, vocabulary building, and create personalized study plans that adapt as you improve.",
 };
