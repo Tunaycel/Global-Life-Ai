@@ -1,0 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Ülkeler",
+    description: "Hedef ülkeleri karşılaştır.",
+};
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+    return children;
+}
