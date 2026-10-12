@@ -19,7 +19,11 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "GlobalLife AI — Your Global Dream, Powered by AI",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: {
+    default: "GlobalLife AI — Your Global Dream, Powered by AI",
+    template: "%s · GlobalLife AI",
+  },
   description:
     "AI-powered language training and immigration consulting platform. Personalized IELTS/TOEFL preparation, 1-on-1 AI tutoring, 24/7 visa consulting.",
   keywords: [
