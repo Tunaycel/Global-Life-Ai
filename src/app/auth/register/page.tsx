@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ShieldCheck, Globe, Zap, Check, Mic, Users, Star } from "lucide-react";
+import Image from "next/image";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, MailCheck, ShieldCheck, Zap, Check, Users } from "lucide-react";
 import dynamic from "next/dynamic";
+import { supabaseBrowser } from "@/lib/supabase";
 
 const SceneAuthentication = dynamic(
     () => import("@/components/3d/SceneAuthentication"),
@@ -22,6 +25,53 @@ const GoogleIcon = () => (
 );
 
 export default function RegisterPage() {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [accepted, setAccepted] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [sentTo, setSentTo] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    async function onSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        setError(null);
+        if (password.length < 8) {
+            setError("Şifre en az 8 karakter olmalı.");
+            return;
+        }
+        setLoading(true);
+        try {
+            const address = email.trim().toLowerCase();
+            const { error: signUpError } = await supabaseBrowser().auth.signUp({
+                email: address,
+                password,
+                options: {
+                    data: { full_name: name.trim() },
+                    emailRedirectTo: `${window.location.origin}/auth/login?confirmed=1`,
+                },
+            });
+            if (signUpError) {
+                const messages: Record<string, string> = {
+                    weak_password: "Bu şifre çok zayıf. Daha uzun ya da tahmin edilmesi zor bir şifre seç.",
+                    email_address_invalid: "Bu e-posta adresi geçerli görünmüyor.",
+                    over_email_send_rate_limit: "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar dene.",
+                    email_address_not_authorized: "Doğrulama e-postası şu an gönderilemiyor. Biraz sonra tekrar dene.",
+                };
+                setError(messages[signUpError.code ?? ""] ?? "Kayıt şu an yapılamadı. Bilgileri kontrol edip tekrar dene.");
+                return;
+            }
+            // Supabase answers the same way for an address that already has an account,
+            // so the form does not reveal who is registered.
+            setSentTo(address);
+        } catch {
+            setError("Kayıt şu an yapılamadı. Biraz sonra tekrar dene.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div className="min-h-screen flex bg-[#030308] p-4 gap-4">
             {/* Left — 3D Scene Card (Soft, floating) */}
@@ -30,9 +80,7 @@ export default function RegisterPage() {
                 {/* Logo top-left - restored visibility on desktop */}
                 <div className="absolute top-10 left-10 z-30">
                     <Link href="/" className="inline-flex items-center gap-3 group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00DC82] to-[#00E5FF] flex items-center justify-center shadow-lg shadow-[#00DC82]/20 group-hover:scale-105 transition-transform duration-300">
-                            <span className="text-[#030308] font-bold text-lg">G</span>
-                        </div>
+                        <Image src="/brand/globallife-logo.svg" alt="" width={40} height={40} className="w-10 h-10 rounded-xl group-hover:scale-105 transition-transform duration-300" />
                         <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
                             GlobalLife
                         </span>
@@ -129,9 +177,7 @@ export default function RegisterPage() {
                 >
                     <div className="lg:hidden mb-10 text-center">
                         <Link href="/" className="inline-flex items-center gap-2.5 group">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00DC82] to-[#00E5FF] flex items-center justify-center shadow-lg shadow-[#00DC82]/20 group-hover:scale-105 transition-transform duration-300">
-                                <span className="text-[#030308] font-bold text-xl">G</span>
-                            </div>
+                            <Image src="/brand/globallife-logo.svg" alt="" width={48} height={48} className="w-12 h-12 rounded-2xl group-hover:scale-105 transition-transform duration-300" />
                         </Link>
                     </div>
 
@@ -143,17 +189,116 @@ export default function RegisterPage() {
                     {/* Social Login with Original Colors */}
                     <div className="mb-6">
                         <button
+                            type="button"
                             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
                             className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group"
                         >
                             <GoogleIcon />
-                            <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">Google ile kaydol</span>
+                            <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">Google ile devam et</span>
                         </button>
                     </div>
 
-                    <p className="text-center text-sm text-white/50 font-light">
-                        Google ile ilk girişinde hesabın otomatik oluşturulur. Ayrıca şifre gerekmez.
-                    </p>
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="flex-1 h-px bg-white/5" />
+                        <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest">veya</span>
+                        <div className="flex-1 h-px bg-white/5" />
+                    </div>
+
+                    {error && (
+                        <p role="alert" className="mb-4 rounded-2xl border border-[#FF453A]/20 bg-[#FF453A]/5 px-4 py-3 text-sm text-[#FF6B60]">{error}</p>
+                    )}
+
+                    {sentTo ? (
+                        <div role="status" className="rounded-2xl border border-[#00E5FF]/20 bg-[#00E5FF]/5 p-6 text-center">
+                            <MailCheck className="mx-auto mb-3 w-8 h-8 text-[#00E5FF]" />
+                            <p className="text-white font-semibold mb-1">E-postanı kontrol et</p>
+                            <p className="text-sm text-white/60 font-light">
+                                <span className="text-white">{sentTo}</span> adresine bir doğrulama bağlantısı gönderdik. Bağlantıya tıkladıktan sonra giriş yapabilirsin.
+                            </p>
+                        </div>
+                    ) : (
+                    <form className="space-y-4" onSubmit={onSubmit}>
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">İsim Soyisim</label>
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#00E5FF]/10 to-[#00DC82]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20 group-focus-within:text-[#00E5FF] transition-colors duration-300 pointer-events-none z-10" />
+                                <input
+                                    type="text"
+                                    required
+                                    autoComplete="name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="Adınız Soyadınız"
+                                    className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/10 outline-none focus:border-[#00E5FF]/30 focus:bg-[#030308] relative z-0 transition-all duration-300 text-sm font-light"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Email</label>
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#00E5FF]/10 to-[#00DC82]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20 group-focus-within:text-[#00E5FF] transition-colors duration-300 pointer-events-none z-10" />
+                                <input
+                                    type="email"
+                                    required
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="ornek@email.com"
+                                    className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/10 outline-none focus:border-[#00E5FF]/30 focus:bg-[#030308] relative z-0 transition-all duration-300 text-sm font-light"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Şifre</label>
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#00E5FF]/10 to-[#00DC82]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20 group-focus-within:text-[#00E5FF] transition-colors duration-300 pointer-events-none z-10" />
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    minLength={8}
+                                    autoComplete="new-password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    className="w-full pl-11 pr-11 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/10 outline-none focus:border-[#00E5FF]/30 focus:bg-[#030308] relative z-0 transition-all duration-300 text-sm font-light"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-white/30 hover:text-white z-10"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 py-2 group cursor-pointer">
+                            <div className="relative flex items-center h-5">
+                                <input type="checkbox" required checked={accepted} onChange={(e) => setAccepted(e.target.checked)} className="w-4 h-4 rounded border-white/20 bg-white/5 text-[#00E5FF] focus:ring-[#00E5FF] focus:ring-offset-0 cursor-pointer" />
+                            </div>
+                            <div className="text-xs text-white/40 leading-5 select-none group-hover:text-white/60 transition-colors duration-300 font-light">
+                                <a href="#" className="text-white hover:text-[#00E5FF] underline decoration-white/20 underline-offset-2 transition-colors">Kullanım koşullarını</a> ve{" "}
+                                <a href="#" className="text-white hover:text-[#00E5FF] underline decoration-white/20 underline-offset-2 transition-colors">gizlilik politikasını</a> kabul ediyorum.
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-4 disabled:opacity-60 disabled:pointer-events-none rounded-2xl font-bold text-[#030308] shadow-[0_4px_20px_rgba(0,229,255,0.15)] hover:shadow-[0_4px_30px_rgba(0,229,255,0.3)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden mt-6"
+                            style={{ background: "linear-gradient(135deg, #00E5FF, #00DC82)" }}
+                        >
+                            <span className="relative z-10 flex items-center gap-2 text-sm uppercase tracking-wide">{loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Kaydediliyor</> : <>Ücretsiz Kaydol <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>}</span>
+                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                        </button>
+                    </form>
+                    )}
 
                     <p className="text-center text-xs text-white/30 mt-8 font-light">
                         Zaten hesabın var mı?{" "}

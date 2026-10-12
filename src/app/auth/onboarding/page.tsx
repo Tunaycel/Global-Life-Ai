@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, User, Target, BookOpen, Sparkles, Check, Languages, GraduationCap, Stamp, Plane } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const steps = [
     { icon: User, title: "Kişisel Bilgiler" },
@@ -74,9 +75,7 @@ export default function OnboardingPage() {
             <div className="relative z-10 w-full max-w-[560px]">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2.5 justify-center mb-10">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0A84FF] to-[#5E5CE6] flex items-center justify-center">
-                        <span className="text-white font-bold">G</span>
-                    </div>
+                    <Image src="/brand/globallife-logo.svg" alt="" width={36} height={36} className="w-9 h-9 rounded-xl group-hover:scale-105 transition-transform duration-300" />
                     <span className="font-bold text-lg text-[var(--text-primary)]">GlobalLife AI</span>
                 </Link>
 

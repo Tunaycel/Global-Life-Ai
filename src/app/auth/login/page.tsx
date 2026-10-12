@@ -1,9 +1,12 @@
 "use client";
 
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ShieldCheck, Globe, Zap, Mic, Play, Users, Star } from "lucide-react";
+import Image from "next/image";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2, ShieldCheck, Globe, Zap, Mic, Users, Star } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const SceneAuthentication = dynamic(
@@ -22,6 +25,48 @@ const GoogleIcon = () => (
 );
 
 export default function LoginPage() {
+    // useSearchParams needs a Suspense boundary on a statically rendered page.
+    return (
+        <Suspense>
+            <LoginForm />
+        </Suspense>
+    );
+}
+
+function LoginForm() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [notice, setNotice] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+    const params = useSearchParams();
+    // Messages carried in the URL until the user submits: after confirming the email, after a
+    // password reset, or an error NextAuth redirected back with.
+    const [submitted, setSubmitted] = useState(false);
+    const urlNotice = params.get("confirmed")
+        ? "E-postan doğrulandı. Şimdi giriş yapabilirsin."
+        : params.get("reset") ? "Şifren güncellendi. Yeni şifrenle giriş yap." : null;
+    const urlError = params.get("error") ? errorMessage(params.get("error")) : null;
+    const shownNotice = notice ?? (submitted ? null : urlNotice);
+    const shownError = error ?? (submitted ? null : urlError);
+
+    async function onSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        setError(null);
+        setNotice(null);
+        setSubmitted(true);
+        setLoading(true);
+        const result = await signIn("credentials", { email, password, redirect: false });
+        setLoading(false);
+        if (!result || result.error) {
+            setError(errorMessage(result?.error ?? null));
+            return;
+        }
+        router.push("/dashboard");
+    }
+
     return (
         <div className="min-h-screen flex bg-[#030308] p-4 gap-4">
             {/* Left — 3D Scene Card (Soft, floating) */}
@@ -30,9 +75,7 @@ export default function LoginPage() {
                 {/* Logo top-left - restored visibility on desktop */}
                 <div className="absolute top-10 left-10 z-30">
                     <Link href="/" className="inline-flex items-center gap-3 group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00DC82] to-[#00E5FF] flex items-center justify-center shadow-lg shadow-[#00DC82]/20 group-hover:scale-105 transition-transform duration-300">
-                            <span className="text-[#030308] font-bold text-lg">G</span>
-                        </div>
+                        <Image src="/brand/globallife-logo.svg" alt="" width={40} height={40} className="w-10 h-10 rounded-xl group-hover:scale-105 transition-transform duration-300" />
                         <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
                             GlobalLife
                         </span>
@@ -139,9 +182,7 @@ export default function LoginPage() {
                 >
                     <div className="lg:hidden mb-10 text-center">
                         <Link href="/" className="inline-flex items-center gap-2.5 group">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00DC82] to-[#00E5FF] flex items-center justify-center shadow-lg shadow-[#00DC82]/20 group-hover:scale-105 transition-transform duration-300">
-                                <span className="text-[#030308] font-bold text-xl">G</span>
-                            </div>
+                            <Image src="/brand/globallife-logo.svg" alt="" width={48} height={48} className="w-12 h-12 rounded-2xl group-hover:scale-105 transition-transform duration-300" />
                         </Link>
                     </div>
 
@@ -153,13 +194,85 @@ export default function LoginPage() {
                     {/* Social Login with Original Colors */}
                     <div className="mb-6">
                         <button
+                            type="button"
                             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
                             className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group"
                         >
                             <GoogleIcon />
-                            <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">Google ile giriş yap</span>
+                            <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">Google ile devam et</span>
                         </button>
                     </div>
+
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="flex-1 h-px bg-white/5" />
+                        <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest">veya</span>
+                        <div className="flex-1 h-px bg-white/5" />
+                    </div>
+
+                    {/* Form */}
+                    {shownNotice && (
+                        <p role="status" className="mb-6 rounded-2xl border border-[#00DC82]/20 bg-[#00DC82]/5 px-4 py-3 text-sm text-[#00DC82]">{shownNotice}</p>
+                    )}
+                    {shownError && (
+                        <p role="alert" className="mb-6 rounded-2xl border border-[#FF453A]/20 bg-[#FF453A]/5 px-4 py-3 text-sm text-[#FF6B60]">{shownError}</p>
+                    )}
+
+                    <form className="space-y-6" onSubmit={onSubmit}>
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Email</label>
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#00DC82]/10 to-[#00E5FF]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#00DC82] transition-colors duration-300 pointer-events-none z-10" />
+                                <input
+                                    type="email"
+                                    required
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="ornek@email.com"
+                                    className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/10 outline-none focus:border-[#00DC82]/30 focus:bg-[#030308] relative z-0 transition-all duration-300 text-sm font-light"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between ml-1">
+                                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Şifre</label>
+                                <Link href="/auth/forgot" className="text-xs text-[#00DC82] hover:text-[#00E5FF] transition-colors font-medium">Unuttun mu?</Link>
+                            </div>
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#00DC82]/10 to-[#00E5FF]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#00DC82] transition-colors duration-300 pointer-events-none z-10" />
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    autoComplete="current-password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    className="w-full pl-12 pr-12 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/10 outline-none focus:border-[#00DC82]/30 focus:bg-[#030308] relative z-0 transition-all duration-300 text-sm font-light"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-white/10 transition-colors text-white/30 hover:text-white z-10"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-4 disabled:opacity-60 disabled:pointer-events-none rounded-2xl font-bold text-[#030308] shadow-[0_4px_20px_rgba(0,220,130,0.15)] hover:shadow-[0_4px_30px_rgba(0,220,130,0.3)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden mt-6"
+                            style={{ background: "linear-gradient(135deg, #00DC82, #00E5FF)" }}
+                        >
+                            <span className="relative z-10 flex items-center gap-2 text-sm uppercase tracking-wide">{loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Giriş yapılıyor</> : <>Giriş Yap <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>}</span>
+                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                        </button>
+                    </form>
 
                     <p className="text-center text-xs text-white/30 mt-8 font-light">
                         Hesabın yok mu?{" "}
@@ -171,4 +284,18 @@ export default function LoginPage() {
             </div>
         </div>
     );
+}
+
+function errorMessage(code: string | null): string {
+    switch (code) {
+        case "invalid_credentials":
+        case "CredentialsSignin":
+            return "E-posta ya da şifre hatalı.";
+        case "email_not_confirmed":
+            return "E-postanı henüz doğrulamadın. Gelen kutundaki bağlantıya tıkla.";
+        case "OAuthAccountNotLinked":
+            return "Bu e-posta başka bir giriş yöntemiyle kayıtlı.";
+        default:
+            return "Giriş şu an yapılamadı. Biraz sonra tekrar dene.";
+    }
 }
