@@ -120,7 +120,7 @@ export default function DashboardPage() {
                             Dil Öğrenme
                         </h3>
                         <span
-                            className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                            className="px-2.5 py-1 rounded-full text-xs font-semibold"
                             style={{ background: "rgba(10,132,255,0.15)", color: "#0A84FF" }}
                         >
                             B1 Seviye
