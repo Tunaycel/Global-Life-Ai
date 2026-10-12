@@ -1,14 +1,10 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/landing/HeroSection";
-import TrustedBySection from "@/components/landing/TrustedBySection";
 import ProblemSolutionSection from "@/components/landing/ProblemSolutionSection";
 import ServicesSection from "@/components/landing/ServicesSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import FeaturesGridSection from "@/components/landing/FeaturesGridSection";
-import StatsSection from "@/components/landing/StatsSection";
-import PricingSection from "@/components/landing/PricingSection";
-import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTASection from "@/components/landing/FinalCTASection";
 import Scene3DWrapper from "@/components/3d/Scene3DWrapper";
@@ -28,14 +24,10 @@ export default function Home() {
       <div className="relative z-10">
         <Navbar />
         <HeroSection />
-        <TrustedBySection />
         <ProblemSolutionSection />
         <ServicesSection />
         <HowItWorksSection />
         <FeaturesGridSection />
-        <StatsSection />
-        <PricingSection />
-        <TestimonialsSection />
         <FAQSection />
         <FinalCTASection />
         <Footer />

@@ -12,7 +12,6 @@ const translations = {
         features: { tr: "Özellikler", en: "Features", de: "Funktionen", pl: "Funkcje" },
         language: { tr: "Dil Öğrenme", en: "Language Learning", de: "Sprachlernen", pl: "Nauka Języków" },
         visa: { tr: "Vize Danışmanlık", en: "Visa Consulting", de: "Visaberatung", pl: "Doradztwo Wizowe" },
-        pricing: { tr: "Fiyatlandırma", en: "Pricing", de: "Preise", pl: "Cennik" },
         about: { tr: "Hakkımızda", en: "About", de: "Über uns", pl: "O nas" },
         login: { tr: "Giriş Yap", en: "Sign In", de: "Anmelden", pl: "Zaloguj się" },
         getStarted: { tr: "Ücretsiz Başla", en: "Start Free", de: "Kostenlos starten", pl: "Zacznij za darmo" },
@@ -44,20 +43,6 @@ const translations = {
             en: "No credit card required — Start in 60 seconds",
             de: "Keine Kreditkarte erforderlich — In 60 Sekunden starten",
             pl: "Karta kredytowa nie jest wymagana — Zacznij w 60 sekund",
-        },
-        users: {
-            tr: "aktif kullanıcı",
-            en: "active users",
-            de: "aktive Nutzer",
-            pl: "aktywnych użytkowników",
-        },
-    },
-    trusted: {
-        title: {
-            tr: "Dünyanın Önde Gelen Kurumları Tarafından Tercih Ediliyor",
-            en: "Trusted by Leading Institutions Worldwide",
-            de: "Von führenden Institutionen weltweit vertraut",
-            pl: "Zaufanie wiodących instytucji na całym świecie",
         },
     },
     problem: {
@@ -136,12 +121,6 @@ const translations = {
             ],
         },
     },
-    stats: {
-        users: { tr: "Aktif Kullanıcı", en: "Active Users", de: "Aktive Nutzer", pl: "Aktywni Użytkownicy" },
-        lessons: { tr: "AI Ders Tamamlandı", en: "AI Lessons Completed", de: "KI-Lektionen abgeschlossen", pl: "Ukończone lekcje AI" },
-        satisfaction: { tr: "Kullanıcı Memnuniyeti", en: "User Satisfaction", de: "Nutzerzufriedenheit", pl: "Zadowolenie Użytkowników" },
-        countries: { tr: "Desteklenen Ülke", en: "Countries Supported", de: "Unterstützte Länder", pl: "Obsługiwane Kraje" },
-    },
     cta: {
         title: {
             tr: "Geleceğinizi Şekillendirin",
@@ -150,10 +129,10 @@ const translations = {
             pl: "Kształtuj swoją przyszłość",
         },
         subtitle: {
-            tr: "Binlerce kullanıcı yurtdışı hedeflerine GlobalLife AI ile ulaştı. Sırada siz varsınız.",
-            en: "Thousands of users have reached their global goals with GlobalLife AI. You're next.",
-            de: "Tausende Nutzer haben ihre globalen Ziele mit GlobalLife AI erreicht. Sie sind als Nächstes dran.",
-            pl: "Tysiące użytkowników osiągnęło swoje globalne cele z GlobalLife AI. Ty jesteś następny.",
+            tr: "Yurtdışı hedefine bugün ilk adımı at.",
+            en: "Take the first step toward your goal abroad today.",
+            de: "Machen Sie heute den ersten Schritt zu Ihrem Ziel im Ausland.",
+            pl: "Zrób dziś pierwszy krok w stronę swojego celu za granicą.",
         },
         button: { tr: "Hemen Başla", en: "Get Started Now", de: "Jetzt starten", pl: "Zacznij teraz" },
     },

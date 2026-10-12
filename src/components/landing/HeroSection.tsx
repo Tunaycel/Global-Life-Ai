@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { wordRevealContainer, wordReveal } from "@/lib/animations";
-import { ChevronDown, Play, Star, ArrowRight } from "lucide-react";
+import { ChevronDown, Play, ArrowRight } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import Link from "next/link";
 
@@ -152,36 +152,6 @@ export default function HeroSection() {
                         {t("hero", "noCard") as string}
                     </motion.p>
 
-                    {/* Social Proof */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.6, delay: 1.1 }}
-                        className="flex items-center justify-center gap-6"
-                    >
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <div
-                                    key={i}
-                                    className="w-9 h-9 rounded-full border-2 border-[#030308]"
-                                    style={{
-                                        background: `linear-gradient(135deg, hsl(${140 + i * 30}, 70%, 50%), hsl(${170 + i * 30}, 60%, 45%))`,
-                                    }}
-                                />
-                            ))}
-                        </div>
-                        <div className="text-left">
-                            <p className="text-sm text-white font-semibold" style={{ fontFamily: "var(--font-display)" }}>
-                                2,400+ {t("hero", "users") as string}
-                            </p>
-                            <div className="flex items-center gap-1 mt-0.5">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <Star key={i} className="w-3.5 h-3.5 fill-[#F5A623] text-[#F5A623]" />
-                                ))}
-                                <span className="text-xs ml-1" style={{ color: "rgba(255,255,255,0.3)" }}>4.9</span>
-                            </div>
-                        </div>
-                    </motion.div>
                 </div>
             </div>
 
