@@ -18,7 +18,7 @@ jobs:
     name: Task gate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v9
         with:
           script: |
             // One rule: the PR closes an open issue that is assigned to its author.

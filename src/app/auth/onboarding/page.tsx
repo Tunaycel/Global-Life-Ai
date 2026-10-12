@@ -2,21 +2,21 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, User, Target, BookOpen, Sparkles, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, User, Target, BookOpen, Sparkles, Check, Languages, GraduationCap, Stamp, Plane } from "lucide-react";
 import Link from "next/link";
 
 const steps = [
-    { icon: User, title: "Kişisel Bilgiler", emoji: "👤" },
-    { icon: Target, title: "Hedefin", emoji: "🎯" },
-    { icon: BookOpen, title: "Detaylar", emoji: "📋" },
-    { icon: Sparkles, title: "Planın Hazır!", emoji: "✨" },
+    { icon: User, title: "Kişisel Bilgiler" },
+    { icon: Target, title: "Hedefin" },
+    { icon: BookOpen, title: "Detaylar" },
+    { icon: Sparkles, title: "Planın Hazır!" },
 ];
 
 const goals = [
-    { emoji: "🗣️", title: "Dil Öğrenmek", desc: "AI ile birebir dil dersleri" },
-    { emoji: "🎓", title: "Sınava Hazırlanmak", desc: "IELTS, TOEFL, Goethe..." },
-    { emoji: "🛂", title: "Vize Almak", desc: "Yurtdışı vize danışmanlığı" },
-    { emoji: "✈️", title: "Yurtdışına Taşınmak", desc: "Tam göç planlaması" },
+    { icon: Languages, title: "Dil Öğrenmek", desc: "AI ile birebir dil dersleri" },
+    { icon: GraduationCap, title: "Sınava Hazırlanmak", desc: "IELTS, TOEFL, Goethe..." },
+    { icon: Stamp, title: "Vize Almak", desc: "Yurtdışı vize danışmanlığı" },
+    { icon: Plane, title: "Yurtdışına Taşınmak", desc: "Tam göç planlaması" },
 ];
 
 const languages = [
@@ -117,7 +117,7 @@ export default function OnboardingPage() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -30 }}
                             >
-                                <h2 className="text-h2 text-[var(--text-primary)] mb-2">Hadi tanışalım! 👋</h2>
+                                <h2 className="text-h2 text-[var(--text-primary)] mb-2">Hadi tanışalım!</h2>
                                 <p className="text-body text-[var(--text-secondary)] mb-6">Seni daha iyi tanımamız için birkaç bilgi</p>
 
                                 <div className="space-y-4">
@@ -142,7 +142,7 @@ export default function OnboardingPage() {
                                                             : "border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-hover)]"
                                                         }`}
                                                 >
-                                                    <span className="text-2xl">{goal.emoji}</span>
+                                                    <goal.icon className="w-6 h-6 text-[var(--color-primary)]" />
                                                     <span className="text-xs font-semibold text-[var(--text-primary)]">{goal.title}</span>
                                                     <span className="text-[10px] text-[var(--text-tertiary)]">{goal.desc}</span>
                                                 </button>
@@ -161,7 +161,7 @@ export default function OnboardingPage() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -30 }}
                             >
-                                <h2 className="text-h2 text-[var(--text-primary)] mb-2">Hangi dil? 🌍</h2>
+                                <h2 className="text-h2 text-[var(--text-primary)] mb-2">Hangi dil?</h2>
                                 <p className="text-body text-[var(--text-secondary)] mb-6">Öğrenmek istediğin dili seç</p>
 
                                 <div className="grid grid-cols-2 gap-3 mb-6">
@@ -208,7 +208,7 @@ export default function OnboardingPage() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -30 }}
                             >
-                                <h2 className="text-h2 text-[var(--text-primary)] mb-2">Hedef ülke 🗺️</h2>
+                                <h2 className="text-h2 text-[var(--text-primary)] mb-2">Hedef ülke</h2>
                                 <p className="text-body text-[var(--text-secondary)] mb-6">Gitmek istediğin ülkeyi seç</p>
 
                                 <div className="grid grid-cols-2 gap-3">
@@ -242,9 +242,9 @@ export default function OnboardingPage() {
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
                                     transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.2 }}
-                                    className="w-20 h-20 rounded-full bg-gradient-to-br from-[#0A84FF] to-[#5E5CE6] flex items-center justify-center mx-auto mb-6 text-4xl"
+                                    className="w-20 h-20 rounded-full bg-gradient-to-br from-[#0A84FF] to-[#5E5CE6] flex items-center justify-center mx-auto mb-6"
                                 >
-                                    🎉
+                                    <Check className="w-10 h-10 text-white" />
                                 </motion.div>
                                 <h2 className="text-h2 text-[var(--text-primary)] mb-2">Planın Hazır!</h2>
                                 <p className="text-body text-[var(--text-secondary)] mb-6">
@@ -271,7 +271,7 @@ export default function OnboardingPage() {
                                 </div>
 
                                 <Link href="/dashboard" className="btn-primary !w-full shimmer !py-3">
-                                    Dashboard&apos;a Git 🚀
+                                    Dashboard&apos;a Git
                                 </Link>
                             </motion.div>
                         )}

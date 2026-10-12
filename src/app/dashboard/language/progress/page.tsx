@@ -153,8 +153,8 @@ export default function ProgressPage() {
                             className="flex items-center justify-between p-3 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-hover)] transition-colors"
                         >
                             <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-10 h-10 rounded-xl bg-[#0A84FF]/10 flex items-center justify-center text-lg shrink-0">
-                                    📖
+                                <div className="w-10 h-10 rounded-xl bg-[#0A84FF]/10 flex items-center justify-center shrink-0">
+                                    <BookOpen className="w-5 h-5 text-[#0A84FF]" />
                                 </div>
                                 <div className="min-w-0">
                                     <p className="text-sm font-medium text-[var(--text-primary)] truncate">{lesson.title}</p>

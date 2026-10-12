@@ -12,7 +12,7 @@ const suggestions = [
 ];
 
 const welcomeMessages = [
-    { role: "ai", text: "Merhaba! 🤖 Ben GlobalLife AI asistanınızım. Size dil öğrenme, vize süreçleri, belgeler ve platform kullanımı hakkında yardımcı olabilirim.\n\nHerhangi bir sorunuz var mı?" },
+    { role: "ai", text: "Merhaba! Ben GlobalLife AI asistanınızım. Size dil öğrenme, vize süreçleri, belgeler ve platform kullanımı hakkında yardımcı olabilirim.\n\nHerhangi bir sorunuz var mı?" },
 ];
 
 export default function AssistantPage() {
@@ -31,7 +31,7 @@ export default function AssistantPage() {
         setTimeout(() => {
             setMessages((prev) => [
                 ...prev,
-                { role: "ai", text: "Bu harika bir soru! Analizimi yapıyorum... 🔍\n\nSorunuzla ilgili kapsamlı bir cevap hazırlıyorum. Lütfen birkaç saniye bekleyin." },
+                { role: "ai", text: "Bu harika bir soru! Analizimi yapıyorum...\n\nSorunuzla ilgili kapsamlı bir cevap hazırlıyorum. Lütfen birkaç saniye bekleyin." },
             ]);
         }, 1000);
     };

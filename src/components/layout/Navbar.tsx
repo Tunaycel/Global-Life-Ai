@@ -49,7 +49,6 @@ export default function Navbar() {
         { label: t("nav", "features") as string, href: "#features" },
         { label: t("nav", "language") as string, href: "#services" },
         { label: t("nav", "visa") as string, href: "#services" },
-        { label: t("nav", "pricing") as string, href: "#pricing" },
     ];
 
     return (
