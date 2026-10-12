@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, Globe, Zap, Mic, Play, Users, Star } from "lucide-react";
+import { ShieldCheck, Globe, Zap, Mic, Play, Users, Star } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const SceneAuthentication = dynamic(
@@ -22,17 +21,7 @@ const GoogleIcon = () => (
     </svg>
 );
 
-const AppleIcon = () => (
-    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-.68-.32-1.42-.4-2.06-.41-.57.01-1.37.11-2.21.5-.72.33-1.64.44-2.58-.45C4.28 17.65 1.5 11.2 4.29 7.27c1.17-1.64 3.19-2.67 4.92-2.69 1.4-.02 2.45.65 3.13 1.06.63.38 1.13.43 1.83.05.81-.43 2.17-1.15 3.66-1.04 1.3.08 2.56.54 3.48 1.63-2.92 1.4-2.4 5.3.73 6.64-.59 1.85-1.57 3.51-2.92 5.06-.63.7-1.42 1.52-2.07 2.3zM12.03 4.45c-.47-2.73 2.21-4.25 4.38-4.43.36 2.84-2.79 4.88-4.38 4.43z" />
-    </svg>
-);
-
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-
     return (
         <div className="min-h-screen flex bg-[#030308] p-4 gap-4">
             {/* Left — 3D Scene Card (Soft, floating) */}
@@ -162,79 +151,15 @@ export default function LoginPage() {
                     </div>
 
                     {/* Social Login with Original Colors */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="mb-6">
                         <button
                             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-                            className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group"
+                            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group"
                         >
                             <GoogleIcon />
-                            <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">Google</span>
-                        </button>
-                        <button
-                            className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group"
-                        >
-                            <AppleIcon />
-                            <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">Apple</span>
+                            <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">Google ile giriş yap</span>
                         </button>
                     </div>
-
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="flex-1 h-px bg-white/5" />
-                        <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest">veya</span>
-                        <div className="flex-1 h-px bg-white/5" />
-                    </div>
-
-                    {/* Form */}
-                    <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Email</label>
-                            <div className="relative group">
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#00DC82]/10 to-[#00E5FF]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#00DC82] transition-colors duration-300 pointer-events-none z-10" />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="ornek@email.com"
-                                    className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/10 outline-none focus:border-[#00DC82]/30 focus:bg-[#030308] relative z-0 transition-all duration-300 text-sm font-light"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between ml-1">
-                                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Şifre</label>
-                                <button type="button" className="text-xs text-[#00DC82] hover:text-[#00E5FF] transition-colors font-medium">Unuttun mu?</button>
-                            </div>
-                            <div className="relative group">
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#00DC82]/10 to-[#00E5FF]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#00DC82] transition-colors duration-300 pointer-events-none z-10" />
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    className="w-full pl-12 pr-12 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/10 outline-none focus:border-[#00DC82]/30 focus:bg-[#030308] relative z-0 transition-all duration-300 text-sm font-light"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-white/10 transition-colors text-white/30 hover:text-white z-10"
-                                >
-                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="w-full py-4 rounded-2xl font-bold text-[#030308] shadow-[0_4px_20px_rgba(0,220,130,0.15)] hover:shadow-[0_4px_30px_rgba(0,220,130,0.3)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden mt-6"
-                            style={{ background: "linear-gradient(135deg, #00DC82, #00E5FF)" }}
-                        >
-                            <span className="relative z-10 flex items-center gap-2 text-sm uppercase tracking-wide">Giriş Yap <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></span>
-                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                        </button>
-                    </form>
 
                     <p className="text-center text-xs text-white/30 mt-8 font-light">
                         Hesabın yok mu?{" "}

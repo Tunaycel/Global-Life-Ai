@@ -46,11 +46,6 @@ export default function GlobalVisaCenter() {
                     <div className="w-full h-full border-b border-white/[0.03] bg-[size:40px_40px] bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)]" />
                 </div>
 
-                <div className="relative flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#30D158] animate-pulse" />
-                    <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">System Operational</span>
-                </div>
-
                 <h1 className="relative text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">
                     Global Visa <br />
                     <span className="bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">Control Center</span>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Bell, Globe, Moon, Shield, CreditCard, LogOut, ChevronRight } from "lucide-react";
+import { User, Bell, Globe, Moon, Shield, LogOut, ChevronRight } from "lucide-react";
 
 export default function SettingsPage() {
     const [darkMode, setDarkMode] = useState(false);
@@ -29,7 +29,6 @@ export default function SettingsPage() {
                     <div>
                         <p className="font-semibold text-[var(--text-primary)]">Kullanıcı</p>
                         <p className="text-caption text-[var(--text-secondary)]">user@email.com</p>
-                        <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-[#0A84FF]/10 text-[#0A84FF] text-xs font-semibold">Premium</span>
                     </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -107,25 +106,6 @@ export default function SettingsPage() {
                             className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${notifications ? "left-6" : "left-1"}`}
                         />
                     </button>
-                </div>
-            </motion.div>
-
-            {/* Subscription */}
-            <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] p-6"
-            >
-                <h2 className="font-semibold text-[var(--text-primary)] flex items-center gap-2 mb-4">
-                    <CreditCard className="w-5 h-5" /> Abonelik
-                </h2>
-                <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-[#0A84FF]/10 to-[#5E5CE6]/10 border border-[#0A84FF]/20 mb-3">
-                    <div>
-                        <p className="text-sm font-semibold text-[var(--text-primary)]">Premium Plan</p>
-                        <p className="text-xs text-[var(--text-secondary)]">₺299/ay • Yenileme: 15 Mart 2026</p>
-                    </div>
-                    <button className="btn-ghost !py-2 !px-4 !text-xs">Planı Değiştir</button>
                 </div>
             </motion.div>
 

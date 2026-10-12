@@ -14,7 +14,6 @@ const Globe3D = dynamic(() => import("@/components/3d/Globe3D"), {
 const footerLinks = {
     Product: [
         { label: "Features", href: "#features" },
-        { label: "Pricing", href: "#pricing" },
         { label: "Language Learning", href: "#services" },
         { label: "Visa Consulting", href: "#services" },
     ],

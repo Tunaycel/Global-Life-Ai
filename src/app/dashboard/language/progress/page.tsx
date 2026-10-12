@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import EmptyState from "@/components/ui/EmptyState";
+import { useLocale } from "@/components/providers/LocaleProvider";
 import { BarChart3, TrendingUp, Clock, BookOpen, Flame, Target, Calendar } from "lucide-react";
 
 const weeklyData = [
@@ -33,6 +35,8 @@ const recentLessons = [
 const maxMinutes = Math.max(...weeklyData.map((d) => d.minutes));
 
 export default function ProgressPage() {
+    const { t } = useLocale();
+
     return (
         <div className="max-w-[1100px] mx-auto space-y-6">
             <div>
@@ -135,14 +139,22 @@ export default function ProgressPage() {
                     <TrendingUp className="w-5 h-5 text-[#30D158]" /> Son Dersler
                 </h3>
                 <div className="space-y-3">
+                    {recentLessons.length === 0 && (
+                        <EmptyState
+                            icon={BookOpen}
+                            title={t("states", "lessonsTitle") as string}
+                            description={t("states", "lessonsDescription") as string}
+                            action={{ label: t("states", "lessonsAction") as string, href: "/dashboard/language/lesson" }}
+                        />
+                    )}
                     {recentLessons.map((lesson, i) => (
                         <div
                             key={i}
                             className="flex items-center justify-between p-3 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-hover)] transition-colors"
                         >
                             <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-10 h-10 rounded-xl bg-[#0A84FF]/10 flex items-center justify-center text-lg shrink-0">
-                                    📖
+                                <div className="w-10 h-10 rounded-xl bg-[#0A84FF]/10 flex items-center justify-center shrink-0">
+                                    <BookOpen className="w-5 h-5 text-[#0A84FF]" />
                                 </div>
                                 <div className="min-w-0">
                                     <p className="text-sm font-medium text-[var(--text-primary)] truncate">{lesson.title}</p>

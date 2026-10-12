@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mic, MicOff, Keyboard, Lightbulb, RotateCcw, BarChart3, SkipForward, LogOut, Volume2 } from "lucide-react";
+import { Mic, MicOff, Keyboard, Lightbulb, RotateCcw, BarChart3, SkipForward, LogOut, Volume2, Clock } from "lucide-react";
 import Link from "next/link";
 
 const avatars = [
-    { name: "Sarah", accent: "Amerikan İngilizcesi", emoji: "👩", active: true },
-    { name: "James", accent: "İngiliz İngilizcesi", emoji: "👨", active: false },
-    { name: "Elena", accent: "İspanyolca", emoji: "👩", active: false },
-    { name: "Hans", accent: "Almanca", emoji: "👨", active: false },
+    { name: "Sarah", accent: "Amerikan İngilizcesi", active: true },
+    { name: "James", accent: "İngiliz İngilizcesi", active: false },
+    { name: "Elena", accent: "İspanyolca", active: false },
+    { name: "Hans", accent: "Almanca", active: false },
 ];
 
 // Picked once when the module loads, so the bars keep their height across renders.
@@ -18,7 +18,7 @@ const waveHeights = Array.from({ length: 40 }, () => Math.random() * 24 + 4);
 export default function LessonPage() {
     const [isRecording, setIsRecording] = useState(false);
     const [messages, setMessages] = useState([
-        { role: "ai", text: "Hello! Today we're going to practice talking about your hobbies. Tell me, what do you enjoy doing in your free time? Try to speak for at least 30 seconds. 🎤" },
+        { role: "ai", text: "Hello! Today we're going to practice talking about your hobbies. Tell me, what do you enjoy doing in your free time? Try to speak for at least 30 seconds." },
         { role: "user", text: "I really enjoy playing football with my friends on weekends. We usually go to the park near my house..." },
         { role: "ai", text: "Great start! Your sentence structure is good. Let me give you a small correction: instead of 'playing football', in American English we often say 'playing soccer'. Now, can you tell me more about why you enjoy it?" },
     ]);
@@ -36,7 +36,8 @@ export default function LessonPage() {
                     <span className="px-2 py-0.5 rounded-full bg-[#30D158]/10 text-[#30D158] text-xs font-semibold">B1</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-                    <span>⏱ 12:34</span>
+                    <Clock className="w-4 h-4" />
+                    <span>12:34</span>
                 </div>
             </div>
 
@@ -49,8 +50,8 @@ export default function LessonPage() {
                 <div className="flex flex-col items-center">
                     {/* Avatar */}
                     <div className="relative mb-4">
-                        <div className={`w-24 h-24 rounded-full bg-gradient-to-br from-[#0A84FF] to-[#5E5CE6] flex items-center justify-center text-4xl ${!isRecording ? "pulse-glow" : ""}`}>
-                            👩‍🏫
+                        <div className={`w-24 h-24 rounded-full bg-gradient-to-br from-[#0A84FF] to-[#5E5CE6] flex items-center justify-center text-3xl font-semibold text-white ${!isRecording ? "pulse-glow" : ""}`}>
+                            S
                         </div>
                         <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#30D158] border-2 border-[#0a0a1a] flex items-center justify-center">
                             <Volume2 className="w-3 h-3 text-white" />
