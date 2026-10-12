@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Video, MicOff, VideoOff, PhoneOff, MessageCircle, Volume2, Settings } from "lucide-react";
+import { Phone, Video, MicOff, VideoOff, PhoneOff, MessageCircle, Volume2, Settings, Bot } from "lucide-react";
 
 // Picked once when the module loads, so the bars keep their height across renders.
 const waveHeights = Array.from({ length: 30 }, () => Math.random() * 30 + 6);
@@ -56,7 +56,7 @@ export default function VoiceSupportPage() {
 
                     {/* Info */}
                     <div className="rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] p-6 space-y-4">
-                        <h3 className="font-semibold text-[var(--text-primary)]">📋 Arama Özellikleri</h3>
+                        <h3 className="font-semibold text-[var(--text-primary)]">Arama Özellikleri</h3>
                         <div className="grid grid-cols-2 gap-3">
                             {[
                                 "Gerçek zamanlı çeviri",
@@ -94,9 +94,9 @@ export default function VoiceSupportPage() {
                                 ],
                             }}
                             transition={{ duration: 2, repeat: Infinity }}
-                            className="w-32 h-32 rounded-full bg-gradient-to-br from-[#0A84FF] to-[#5E5CE6] flex items-center justify-center text-6xl"
+                            className="w-32 h-32 rounded-full bg-gradient-to-br from-[#0A84FF] to-[#5E5CE6] flex items-center justify-center"
                         >
-                            🤖
+                            <Bot className="w-16 h-16 text-white" aria-hidden="true" />
                         </motion.div>
                         <h3 className="text-white font-semibold text-lg mt-6">AI Danışman</h3>
                         <p className="text-white/40 text-sm mt-1">Bağlandı • 02:34</p>

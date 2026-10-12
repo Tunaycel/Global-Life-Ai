@@ -41,7 +41,7 @@ function replyDelay(): number {
 export default function AIChatBot() {
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: "ai", text: "Hi! 👋 I'm GlobalLife AI Assistant. Ask me anything about our language learning or visa consulting services!" },
+        { role: "ai", text: "Hi! I'm GlobalLife AI Assistant. Ask me anything about our language learning or visa consulting services!" },
     ]);
     const [input, setInput] = useState("");
     const [typing, setTyping] = useState(false);

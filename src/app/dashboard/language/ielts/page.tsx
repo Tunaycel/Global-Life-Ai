@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Construction } from "lucide-react";
 
 const tabs = ["Speaking", "Writing", "Reading", "Listening"];
 
@@ -81,7 +82,7 @@ export default function IELTSPage() {
 
                     {/* Mock Test */}
                     <div className="rounded-2xl bg-gradient-to-r from-[#0A84FF]/10 to-[#5E5CE6]/10 border border-[#0A84FF]/20 p-6 text-center">
-                        <h3 className="text-h3 text-[var(--text-primary)] mb-2">🎯 Tam Mock Test</h3>
+                        <h3 className="text-h3 text-[var(--text-primary)] mb-2">Tam Mock Test</h3>
                         <p className="text-body text-[var(--text-secondary)] mb-4">Gerçek sınav formatında 4 bölüm, tam süre</p>
                         <button className="btn-primary shimmer !py-3 !px-8">Mock Test Başlat</button>
                     </div>
@@ -90,7 +91,7 @@ export default function IELTSPage() {
 
             {activeTab !== "Speaking" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] p-12 text-center">
-                    <span className="text-5xl block mb-4">🚧</span>
+                    <Construction className="w-12 h-12 mx-auto mb-4 text-[var(--text-secondary)]" aria-hidden="true" />
                     <h3 className="text-h3 text-[var(--text-primary)] mb-2">{activeTab} Modülü</h3>
                     <p className="text-body text-[var(--text-secondary)]">Bu modül yakında aktif olacak. Speaking ile başlamayı dene!</p>
                 </motion.div>
