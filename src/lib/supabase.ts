@@ -5,28 +5,32 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-let browserClient: SupabaseClient | null = null;
-
 export function supabaseConfigured(): boolean {
     return Boolean(url && key);
 }
 
-// One client per browser tab; it also picks up the session from a reset-password link.
-export function supabaseBrowser(): SupabaseClient {
+// The app's session lives in NextAuth, so Supabase never keeps one: nothing is written to
+// localStorage and tokens in a link are read by our own code, not picked up automatically.
+export function supabaseClient(): SupabaseClient {
     if (!url || !key) throw new Error("Supabase is not configured: set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
-    browserClient ??= createClient(url, key);
-    return browserClient;
+    return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
 }
 
-// A fresh client per server call, so no session leaks between users.
-export function supabaseServer(): SupabaseClient {
-    if (!url || !key) throw new Error("Supabase is not configured: set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
-    return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+// Tokens Supabase puts after "#" in confirmation and reset links (implicit flow).
+export function readLinkTokens(hash: string) {
+    const params = new URLSearchParams(hash.replace(/^#/, ""));
+    return {
+        accessToken: params.get("access_token"),
+        refreshToken: params.get("refresh_token"),
+        type: params.get("type"),
+        error: params.get("error_code") ?? params.get("error"),
+    };
 }
 
 // Error codes shared by the credentials provider and the login page.
 export const AUTH_ERRORS = {
     invalid: "invalid_credentials",
     unconfirmed: "email_not_confirmed",
+    rateLimited: "rate_limited",
     unavailable: "auth_unavailable",
 } as const;

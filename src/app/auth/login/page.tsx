@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { getProviders, signIn } from "next-auth/react";
+import { AUTH_ERRORS, supabaseClient, supabaseConfigured } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -24,47 +25,77 @@ const GoogleIcon = () => (
     </svg>
 );
 
-export default function LoginPage() {
-    // useSearchParams needs a Suspense boundary on a statically rendered page.
+// Only "/..." paths, so a crafted link cannot send a fresh session to another site.
+function safeCallback(): string {
+    const value = new URLSearchParams(window.location.search).get("callbackUrl");
+    return value && value.startsWith("/") && !value.startsWith("//") ? value : "/dashboard";
+}
+
+// Messages carried in the URL (after confirming the email, after a reset, or an error
+// NextAuth redirected back with). Kept in its own Suspense boundary so the rest of the
+// page still renders on the server.
+function UrlMessages({ hidden }: { hidden: boolean }) {
+    const params = useSearchParams();
+    if (hidden) return null;
+    const notice = params.get("confirmed")
+        ? "E-postan doğrulandı. Şimdi giriş yapabilirsin."
+        : params.get("reset") ? "Şifren güncellendi. Yeni şifrenle giriş yap." : null;
+    const error = params.get("error") ? errorMessage(params.get("error")) : null;
     return (
-        <Suspense>
-            <LoginForm />
-        </Suspense>
+        <>
+            {notice && <p role="status" className="mb-6 rounded-2xl border border-[#00DC82]/20 bg-[#00DC82]/5 px-4 py-3 text-sm text-[#00DC82]">{notice}</p>}
+            {error && <p role="alert" className="mb-6 rounded-2xl border border-[#FF453A]/20 bg-[#FF453A]/5 px-4 py-3 text-sm text-[#FF6B60]">{error}</p>}
+        </>
     );
 }
 
-function LoginForm() {
+export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [notice, setNotice] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
-    const params = useSearchParams();
-    // Messages carried in the URL until the user submits: after confirming the email, after a
-    // password reset, or an error NextAuth redirected back with.
     const [submitted, setSubmitted] = useState(false);
-    const urlNotice = params.get("confirmed")
-        ? "E-postan doğrulandı. Şimdi giriş yapabilirsin."
-        : params.get("reset") ? "Şifren güncellendi. Yeni şifrenle giriş yap." : null;
-    const urlError = params.get("error") ? errorMessage(params.get("error")) : null;
-    const shownNotice = notice ?? (submitted ? null : urlNotice);
-    const shownError = error ?? (submitted ? null : urlError);
+    const [googleEnabled, setGoogleEnabled] = useState(false);
+    const router = useRouter();
+
+    // The Google button shows only when the server has Google keys.
+    useEffect(() => {
+        getProviders().then((providers) => setGoogleEnabled(Boolean(providers?.google))).catch(() => {});
+    }, []);
 
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
-        setNotice(null);
         setSubmitted(true);
         setLoading(true);
-        const result = await signIn("credentials", { email, password, redirect: false });
-        setLoading(false);
-        if (!result || result.error) {
-            setError(errorMessage(result?.error ?? null));
-            return;
+        try {
+            if (!supabaseConfigured()) throw new Error(AUTH_ERRORS.unavailable);
+            // The password goes to Supabase from the visitor's browser; NextAuth gets only the
+            // resulting access token and checks it on the server.
+            const { data, error: authError } = await supabaseClient().auth.signInWithPassword({
+                email: email.trim().toLowerCase(),
+                password,
+            });
+            if (authError || !data.session) {
+                const code = authError?.code === "email_not_confirmed" ? AUTH_ERRORS.unconfirmed
+                    : authError?.status === 429 ? AUTH_ERRORS.rateLimited
+                    : authError?.code === "invalid_credentials" || authError?.status === 400 ? AUTH_ERRORS.invalid
+                    : AUTH_ERRORS.unavailable;
+                setError(errorMessage(code));
+                return;
+            }
+            const result = await signIn("credentials", { accessToken: data.session.access_token, redirect: false });
+            if (!result || result.error) {
+                setError(errorMessage(result?.error ?? null));
+                return;
+            }
+            router.push(safeCallback());
+        } catch {
+            setError(errorMessage(null));
+        } finally {
+            setLoading(false);
         }
-        router.push("/dashboard");
     }
 
     return (
@@ -192,10 +223,11 @@ function LoginForm() {
                     </div>
 
                     {/* Social Login with Original Colors */}
+                    {googleEnabled && (<>
                     <div className="mb-6">
                         <button
                             type="button"
-                            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                            onClick={() => signIn("google", { callbackUrl: safeCallback() })}
                             className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group"
                         >
                             <GoogleIcon />
@@ -208,22 +240,24 @@ function LoginForm() {
                         <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest">veya</span>
                         <div className="flex-1 h-px bg-white/5" />
                     </div>
+                    </>)}
 
                     {/* Form */}
-                    {shownNotice && (
-                        <p role="status" className="mb-6 rounded-2xl border border-[#00DC82]/20 bg-[#00DC82]/5 px-4 py-3 text-sm text-[#00DC82]">{shownNotice}</p>
-                    )}
-                    {shownError && (
-                        <p role="alert" className="mb-6 rounded-2xl border border-[#FF453A]/20 bg-[#FF453A]/5 px-4 py-3 text-sm text-[#FF6B60]">{shownError}</p>
+                    <Suspense>
+                        <UrlMessages hidden={submitted} />
+                    </Suspense>
+                    {error && (
+                        <p role="alert" className="mb-6 rounded-2xl border border-[#FF453A]/20 bg-[#FF453A]/5 px-4 py-3 text-sm text-[#FF6B60]">{error}</p>
                     )}
 
                     <form className="space-y-6" onSubmit={onSubmit}>
                         <div className="space-y-2">
-                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Email</label>
+                            <label htmlFor="login-email" className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Email</label>
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#00DC82]/10 to-[#00E5FF]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#00DC82] transition-colors duration-300 pointer-events-none z-10" />
                                 <input
+                                    id="login-email"
                                     type="email"
                                     required
                                     autoComplete="email"
@@ -237,13 +271,14 @@ function LoginForm() {
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between ml-1">
-                                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Şifre</label>
+                                <label htmlFor="login-password" className="text-xs font-semibold text-white/50 uppercase tracking-wider">Şifre</label>
                                 <Link href="/auth/forgot" className="text-xs text-[#00DC82] hover:text-[#00E5FF] transition-colors font-medium">Unuttun mu?</Link>
                             </div>
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#00DC82]/10 to-[#00E5FF]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#00DC82] transition-colors duration-300 pointer-events-none z-10" />
                                 <input
+                                    id="login-password"
                                     type={showPassword ? "text" : "password"}
                                     required
                                     autoComplete="current-password"
@@ -293,6 +328,10 @@ function errorMessage(code: string | null): string {
             return "E-posta ya da şifre hatalı.";
         case "email_not_confirmed":
             return "E-postanı henüz doğrulamadın. Gelen kutundaki bağlantıya tıkla.";
+        case "rate_limited":
+            return "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar dene.";
+        case "confirm_failed":
+            return "Doğrulama bağlantısı geçersiz ya da süresi dolmuş. Yeniden kayıt olmayı dene.";
         case "OAuthAccountNotLinked":
             return "Bu e-posta başka bir giriş yöntemiyle kayıtlı.";
         default:

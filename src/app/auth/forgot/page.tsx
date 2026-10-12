@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Mail, Loader2, MailCheck } from "lucide-react";
 import AuthCard, { inputClass, buttonClass } from "@/components/auth/AuthCard";
-import { supabaseBrowser } from "@/lib/supabase";
+import { supabaseClient } from "@/lib/supabase";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -17,11 +17,12 @@ export default function ForgotPasswordPage() {
         setError(null);
         setLoading(true);
         try {
-            const { error: resetError } = await supabaseBrowser().auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+            const { error: resetError } = await supabaseClient().auth.resetPasswordForEmail(email.trim().toLowerCase(), {
                 redirectTo: `${window.location.origin}/auth/reset`,
             });
-            // Same answer whether or not the address has an account.
-            if (resetError && resetError.status !== 400) throw resetError;
+            // Same answer whether or not the address has an account: unknown addresses get a
+            // 400 and a repeat request for a real one a 429, so neither may show differently.
+            if (resetError && resetError.status !== 400 && resetError.status !== 429) throw resetError;
             setSent(true);
         } catch {
             setError("Bağlantı şu an gönderilemedi. Biraz sonra tekrar dene.");

@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Lock, Loader2 } from "lucide-react";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import AuthCard, { inputClass, buttonClass } from "@/components/auth/AuthCard";
-import { supabaseBrowser } from "@/lib/supabase";
+import { readLinkTokens, supabaseClient, supabaseConfigured } from "@/lib/supabase";
 
-// Opened from the reset email. Supabase reads the recovery token from the link and starts a
-// short session; we use it only to set the new password, then send the user to sign in.
+// Opened from the reset email. The recovery tokens after "#" are read once, cleared from the
+// address bar, and held only in memory for this one password change; then every session of
+// the account is signed out.
 export default function ResetPasswordPage() {
     const router = useRouter();
+    const client = useRef<SupabaseClient | null>(null);
     const [ready, setReady] = useState<boolean | null>(null);
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
@@ -18,12 +21,18 @@ export default function ResetPasswordPage() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const supabase = supabaseBrowser();
-        const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-            if (event === "PASSWORD_RECOVERY") setReady(true);
-        });
-        supabase.auth.getSession().then(({ data }) => setReady((current) => current ?? Boolean(data.session)));
-        return () => sub.subscription.unsubscribe();
+        const tokens = readLinkTokens(window.location.hash);
+        window.history.replaceState(null, "", window.location.pathname);
+        if (!supabaseConfigured() || tokens.type !== "recovery" || !tokens.accessToken || !tokens.refreshToken) {
+            Promise.resolve().then(() => setReady(false));
+            return;
+        }
+        const supabase = supabaseClient();
+        client.current = supabase;
+        supabase.auth
+            .setSession({ access_token: tokens.accessToken, refresh_token: tokens.refreshToken })
+            .then(({ error: sessionError }) => setReady(!sessionError))
+            .catch(() => setReady(false));
     }, []);
 
     async function onSubmit(e: React.FormEvent) {
@@ -31,18 +40,23 @@ export default function ResetPasswordPage() {
         setError(null);
         if (password.length < 8) return setError("Şifre en az 8 karakter olmalı.");
         if (password !== confirm) return setError("Şifreler aynı değil.");
+        const supabase = client.current;
+        if (!supabase) return setReady(false);
         setLoading(true);
-        const supabase = supabaseBrowser();
-        const { error: updateError } = await supabase.auth.updateUser({ password });
-        setLoading(false);
-        if (updateError) {
-            setError(updateError.code === "same_password"
-                ? "Yeni şifre eskisiyle aynı olamaz."
-                : "Şifre güncellenemedi. Bağlantının süresi dolmuş olabilir; yeniden iste.");
-            return;
+        try {
+            const { error: updateError } = await supabase.auth.updateUser({ password });
+            if (updateError) {
+                setError(updateError.code === "same_password"
+                    ? "Yeni şifre eskisiyle aynı olamaz."
+                    : "Şifre güncellenemedi. Bağlantının süresi dolmuş olabilir; yeniden iste.");
+                return;
+            }
+            // Sign the account out everywhere, so whoever had the old password loses access.
+            await supabase.auth.signOut({ scope: "global" }).catch(() => {});
+            router.push("/auth/login?reset=1");
+        } finally {
+            setLoading(false);
         }
-        await supabase.auth.signOut();
-        router.push("/auth/login?reset=1");
     }
 
     return (

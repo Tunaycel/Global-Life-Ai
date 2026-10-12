@@ -1,30 +1,26 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { AUTH_ERRORS, supabaseConfigured, supabaseServer } from "@/lib/supabase";
+import { AUTH_ERRORS, supabaseClient, supabaseConfigured } from "@/lib/supabase";
 
 const providers: NextAuthOptions["providers"] = [
-    // Email and password: Supabase Auth checks the password; NextAuth keeps the session,
-    // so both sign-in methods end in the same session.
+    // Email and password: the browser checks the password with Supabase (so Supabase's rate
+    // limits apply to each visitor's own IP) and hands over the access token. Here we only
+    // verify that token with Supabase; NextAuth keeps the session, the same one Google uses.
     CredentialsProvider({
         id: "credentials",
         name: "Email",
         credentials: {
-            email: { label: "Email", type: "email" },
-            password: { label: "Password", type: "password" },
+            accessToken: { label: "Access token", type: "text" },
         },
         async authorize(credentials) {
-            const email = credentials?.email?.trim().toLowerCase();
-            const password = credentials?.password;
-            if (!email || !password) throw new Error(AUTH_ERRORS.invalid);
+            const accessToken = credentials?.accessToken;
+            if (!accessToken) throw new Error(AUTH_ERRORS.invalid);
             if (!supabaseConfigured()) throw new Error(AUTH_ERRORS.unavailable);
 
-            const { data, error } = await supabaseServer().auth.signInWithPassword({ email, password });
-            if (error) {
-                if (error.code === "email_not_confirmed") throw new Error(AUTH_ERRORS.unconfirmed);
-                if (error.code === "invalid_credentials" || error.status === 400) throw new Error(AUTH_ERRORS.invalid);
-                throw new Error(AUTH_ERRORS.unavailable);
-            }
+            const { data, error } = await supabaseClient().auth.getUser(accessToken);
+            if (error || !data.user) throw new Error(AUTH_ERRORS.invalid);
+            if (!data.user.email_confirmed_at) throw new Error(AUTH_ERRORS.unconfirmed);
             const user = data.user;
             return {
                 id: user.id,
@@ -47,7 +43,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
 const handler = NextAuth({
     providers,
-    session: { strategy: "jwt" },
+    // A week, so a stolen session does not outlive a password reset by a month.
+    session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 7 },
     pages: {
         signIn: "/auth/login",
     },

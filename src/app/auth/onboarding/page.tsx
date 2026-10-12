@@ -74,7 +74,7 @@ export default function OnboardingPage() {
 
             <div className="relative z-10 w-full max-w-[560px]">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2.5 justify-center mb-10">
+                <Link href="/" className="flex items-center gap-2.5 justify-center mb-10 group">
                     <Image src="/brand/globallife-logo.svg" alt="" width={36} height={36} className="w-9 h-9 rounded-xl group-hover:scale-105 transition-transform duration-300" />
                     <span className="font-bold text-lg text-[var(--text-primary)]">GlobalLife AI</span>
                 </Link>

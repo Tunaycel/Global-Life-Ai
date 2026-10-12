@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { getProviders, signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, MailCheck, ShieldCheck, Zap, Check, Users } from "lucide-react";
 import dynamic from "next/dynamic";
-import { supabaseBrowser } from "@/lib/supabase";
+import { supabaseClient } from "@/lib/supabase";
 
 const SceneAuthentication = dynamic(
     () => import("@/components/3d/SceneAuthentication"),
@@ -29,10 +29,15 @@ export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [sentTo, setSentTo] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [googleEnabled, setGoogleEnabled] = useState(false);
+
+    // The Google button shows only when the server has Google keys.
+    useEffect(() => {
+        getProviders().then((providers) => setGoogleEnabled(Boolean(providers?.google))).catch(() => {});
+    }, []);
 
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -44,12 +49,12 @@ export default function RegisterPage() {
         setLoading(true);
         try {
             const address = email.trim().toLowerCase();
-            const { error: signUpError } = await supabaseBrowser().auth.signUp({
+            const { error: signUpError } = await supabaseClient().auth.signUp({
                 email: address,
                 password,
                 options: {
                     data: { full_name: name.trim() },
-                    emailRedirectTo: `${window.location.origin}/auth/login?confirmed=1`,
+                    emailRedirectTo: `${window.location.origin}/auth/confirm`,
                 },
             });
             if (signUpError) {
@@ -187,6 +192,7 @@ export default function RegisterPage() {
                     </div>
 
                     {/* Social Login with Original Colors */}
+                    {googleEnabled && (<>
                     <div className="mb-6">
                         <button
                             type="button"
@@ -203,6 +209,7 @@ export default function RegisterPage() {
                         <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest">veya</span>
                         <div className="flex-1 h-px bg-white/5" />
                     </div>
+                    </>)}
 
                     {error && (
                         <p role="alert" className="mb-4 rounded-2xl border border-[#FF453A]/20 bg-[#FF453A]/5 px-4 py-3 text-sm text-[#FF6B60]">{error}</p>
@@ -219,11 +226,12 @@ export default function RegisterPage() {
                     ) : (
                     <form className="space-y-4" onSubmit={onSubmit}>
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">İsim Soyisim</label>
+                            <label htmlFor="reg-name" className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">İsim Soyisim</label>
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#00E5FF]/10 to-[#00DC82]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20 group-focus-within:text-[#00E5FF] transition-colors duration-300 pointer-events-none z-10" />
                                 <input
+                                    id="reg-name"
                                     type="text"
                                     required
                                     autoComplete="name"
@@ -236,11 +244,12 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Email</label>
+                            <label htmlFor="reg-email" className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Email</label>
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#00E5FF]/10 to-[#00DC82]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20 group-focus-within:text-[#00E5FF] transition-colors duration-300 pointer-events-none z-10" />
                                 <input
+                                    id="reg-email"
                                     type="email"
                                     required
                                     autoComplete="email"
@@ -253,11 +262,12 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Şifre</label>
+                            <label htmlFor="reg-password" className="text-xs font-semibold text-white/50 ml-1 uppercase tracking-wider">Şifre</label>
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#00E5FF]/10 to-[#00DC82]/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20 group-focus-within:text-[#00E5FF] transition-colors duration-300 pointer-events-none z-10" />
                                 <input
+                                    id="reg-password"
                                     type={showPassword ? "text" : "password"}
                                     required
                                     minLength={8}
@@ -275,16 +285,6 @@ export default function RegisterPage() {
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
-                            </div>
-                        </div>
-
-                        <div className="flex items-start gap-3 py-2 group cursor-pointer">
-                            <div className="relative flex items-center h-5">
-                                <input type="checkbox" required checked={accepted} onChange={(e) => setAccepted(e.target.checked)} className="w-4 h-4 rounded border-white/20 bg-white/5 text-[#00E5FF] focus:ring-[#00E5FF] focus:ring-offset-0 cursor-pointer" />
-                            </div>
-                            <div className="text-xs text-white/40 leading-5 select-none group-hover:text-white/60 transition-colors duration-300 font-light">
-                                <a href="#" className="text-white hover:text-[#00E5FF] underline decoration-white/20 underline-offset-2 transition-colors">Kullanım koşullarını</a> ve{" "}
-                                <a href="#" className="text-white hover:text-[#00E5FF] underline decoration-white/20 underline-offset-2 transition-colors">gizlilik politikasını</a> kabul ediyorum.
                             </div>
                         </div>
 
