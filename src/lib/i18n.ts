@@ -136,6 +136,52 @@ const translations = {
         },
         button: { tr: "Hemen Başla", en: "Get Started Now", de: "Jetzt starten", pl: "Zacznij teraz" },
     },
+    notFound: {
+        title: { tr: "Bu sayfa bulunamadı.", en: "This page could not be found.", de: "Diese Seite wurde nicht gefunden.", pl: "Nie znaleziono tej strony." },
+        description: {
+            tr: "Adres yanlış yazılmış ya da sayfa kaldırılmış olabilir.",
+            en: "The address may be mistyped, or the page may have been removed.",
+            de: "Die Adresse ist vielleicht falsch geschrieben oder die Seite wurde entfernt.",
+            pl: "Adres może być błędnie wpisany lub strona została usunięta.",
+        },
+        back: { tr: "Ana sayfaya dön", en: "Back to the home page", de: "Zurück zur Startseite", pl: "Wróć do strony głównej" },
+    },
+    states: {
+        loading: { tr: "Yükleniyor…", en: "Loading…", de: "Wird geladen…", pl: "Ładowanie…" },
+        errorTitle: { tr: "Bir şeyler ters gitti.", en: "Something went wrong.", de: "Etwas ist schiefgelaufen.", pl: "Coś poszło nie tak." },
+        errorDescription: {
+            tr: "Bu sayfa yüklenirken bir hata oluştu. Tekrar deneyebilir ya da panele dönebilirsin.",
+            en: "Something went wrong while loading this page. You can try again or go back to the dashboard.",
+            de: "Beim Laden dieser Seite ist ein Fehler aufgetreten. Sie können es erneut versuchen oder zum Dashboard zurückkehren.",
+            pl: "Podczas ładowania tej strony wystąpił błąd. Możesz spróbować ponownie lub wrócić do panelu.",
+        },
+        retry: { tr: "Tekrar dene", en: "Try again", de: "Erneut versuchen", pl: "Spróbuj ponownie" },
+        backToDashboard: { tr: "Panele dön", en: "Back to the dashboard", de: "Zurück zum Dashboard", pl: "Wróć do panelu" },
+        documentsTitle: { tr: "Henüz belge yüklemedin.", en: "You have not uploaded any documents yet.", de: "Sie haben noch keine Dokumente hochgeladen.", pl: "Nie przesłałeś jeszcze żadnych dokumentów." },
+        documentsDescription: {
+            tr: "Vize başvurun için gereken belgeleri buraya ekleyebilirsin.",
+            en: "You can add the documents for your visa application here.",
+            de: "Hier können Sie die Dokumente für Ihren Visumantrag hinzufügen.",
+            pl: "Tutaj możesz dodać dokumenty do wniosku wizowego.",
+        },
+        documentsAction: { tr: "İlk belgeni yükle", en: "Upload your first document", de: "Erstes Dokument hochladen", pl: "Prześlij pierwszy dokument" },
+        roadmapTitle: { tr: "Yol haritan henüz hazır değil.", en: "Your roadmap is not ready yet.", de: "Ihr Fahrplan ist noch nicht fertig.", pl: "Twoja mapa drogowa nie jest jeszcze gotowa." },
+        roadmapDescription: {
+            tr: "Hedef ülkeni seçince adım adım planın burada görünecek.",
+            en: "Once you choose your target country, your step-by-step plan will appear here.",
+            de: "Sobald Sie Ihr Zielland wählen, erscheint hier Ihr Schritt-für-Schritt-Plan.",
+            pl: "Gdy wybierzesz kraj docelowy, tutaj pojawi się Twój plan krok po kroku.",
+        },
+        roadmapAction: { tr: "Hedef ülkeni seç", en: "Choose your target country", de: "Zielland wählen", pl: "Wybierz kraj docelowy" },
+        lessonsTitle: { tr: "Henüz ders tamamlamadın.", en: "You have not finished any lessons yet.", de: "Sie haben noch keine Lektion abgeschlossen.", pl: "Nie ukończyłeś jeszcze żadnej lekcji." },
+        lessonsDescription: {
+            tr: "İlk dersini bitirdiğinde sonuçların burada listelenecek.",
+            en: "Your results will be listed here after your first lesson.",
+            de: "Nach Ihrer ersten Lektion erscheinen Ihre Ergebnisse hier.",
+            pl: "Po pierwszej lekcji Twoje wyniki pojawią się tutaj.",
+        },
+        lessonsAction: { tr: "İlk derse başla", en: "Start your first lesson", de: "Erste Lektion starten", pl: "Rozpocznij pierwszą lekcję" },
+    },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

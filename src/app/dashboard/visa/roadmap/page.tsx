@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle, Circle, ArrowRight } from "lucide-react";
+import { CheckCircle, Circle, ArrowRight, Map as MapIcon } from "lucide-react";
+import EmptyState from "@/components/ui/EmptyState";
+import { useLocale } from "@/components/providers/LocaleProvider";
 
 type Step = { text: string; done: boolean; current?: boolean };
 type Phase = { title: string; status: string; steps: Step[] };
@@ -72,6 +74,8 @@ const statusColors: Record<string, string> = {
 };
 
 export default function RoadmapPage() {
+    const { t } = useLocale();
+
     return (
         <div className="max-w-[800px] mx-auto space-y-6">
             <div>
@@ -102,6 +106,14 @@ export default function RoadmapPage() {
 
             {/* Timeline */}
             <div className="space-y-0">
+                {phases.length === 0 && (
+                    <EmptyState
+                        icon={MapIcon}
+                        title={t("states", "roadmapTitle") as string}
+                        description={t("states", "roadmapDescription") as string}
+                        action={{ label: t("states", "roadmapAction") as string, href: "/dashboard/visa/countries" }}
+                    />
+                )}
                 {phases.map((phase, pi) => (
                     <motion.div
                         key={phase.title}

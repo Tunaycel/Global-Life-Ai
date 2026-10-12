@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import EmptyState from "@/components/ui/EmptyState";
+import { useLocale } from "@/components/providers/LocaleProvider";
 import { BarChart3, TrendingUp, Clock, BookOpen, Flame, Target, Calendar } from "lucide-react";
 
 const weeklyData = [
@@ -33,6 +35,8 @@ const recentLessons = [
 const maxMinutes = Math.max(...weeklyData.map((d) => d.minutes));
 
 export default function ProgressPage() {
+    const { t } = useLocale();
+
     return (
         <div className="max-w-[1100px] mx-auto space-y-6">
             <div>
@@ -135,6 +139,14 @@ export default function ProgressPage() {
                     <TrendingUp className="w-5 h-5 text-[#30D158]" /> Son Dersler
                 </h3>
                 <div className="space-y-3">
+                    {recentLessons.length === 0 && (
+                        <EmptyState
+                            icon={BookOpen}
+                            title={t("states", "lessonsTitle") as string}
+                            description={t("states", "lessonsDescription") as string}
+                            action={{ label: t("states", "lessonsAction") as string, href: "/dashboard/language/lesson" }}
+                        />
+                    )}
                     {recentLessons.map((lesson, i) => (
                         <div
                             key={i}

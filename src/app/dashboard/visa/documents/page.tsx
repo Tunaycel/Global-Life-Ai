@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/ui/EmptyState";
+import { useLocale } from "@/components/providers/LocaleProvider";
 import { Upload, FileText, Image, CheckCircle, AlertCircle, Clock, Eye, Trash2, Plus, Sparkles } from "lucide-react";
 
 const documents = [
@@ -21,6 +23,8 @@ const statusConfig: Record<string, { label: string; color: string; icon: typeof 
 };
 
 export default function DocumentsPage() {
+    const { t } = useLocale();
+
     return (
         <div className="max-w-[900px] mx-auto space-y-6">
             <div className="flex items-center justify-between">
@@ -48,6 +52,7 @@ export default function DocumentsPage() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                id="upload"
                 className="border-2 border-dashed border-[var(--border)] rounded-2xl p-8 text-center hover:border-[var(--color-primary)]/50 transition-colors cursor-pointer"
             >
                 <Upload className="w-10 h-10 text-[var(--text-tertiary)] mx-auto mb-3" />
@@ -57,6 +62,14 @@ export default function DocumentsPage() {
 
             {/* Document List */}
             <div className="space-y-3">
+                {documents.length === 0 && (
+                    <EmptyState
+                        icon={FileText}
+                        title={t("states", "documentsTitle") as string}
+                        description={t("states", "documentsDescription") as string}
+                        action={{ label: t("states", "documentsAction") as string, href: "#upload" }}
+                    />
+                )}
                 {documents.map((doc, i) => {
                     const status = statusConfig[doc.status];
                     const StatusIcon = status.icon;
