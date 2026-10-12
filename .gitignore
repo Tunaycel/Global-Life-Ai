@@ -48,3 +48,4 @@ next-env.d.ts
 scripts/team-report/report.html
 scripts/team-report/subject.txt
 scripts/team-report/node_modules/
+!.env.example
