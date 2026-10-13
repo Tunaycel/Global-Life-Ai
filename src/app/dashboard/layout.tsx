@@ -28,12 +28,24 @@ const navItems = [
 ];
 
 // This layout is prerendered at build time, so a date in the HTML would be the
-// build date. The server snapshot is empty; the client fills in today's date.
-const noopSubscribe = () => () => { };
+// build date. The server snapshot is empty; the client fills in today's date
+// and updates it at local midnight.
+function subscribeToMidnight(onChange: () => void) {
+    const msUntilMidnight = () => {
+        const now = new Date();
+        const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        return midnight.getTime() - now.getTime() + 1000;
+    };
+    let timer = window.setTimeout(function tick() {
+        onChange();
+        timer = window.setTimeout(tick, msUntilMidnight());
+    }, msUntilMidnight());
+    return () => window.clearTimeout(timer);
+}
 
 function TodayDate() {
     const today = useSyncExternalStore(
-        noopSubscribe,
+        subscribeToMidnight,
         () => new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
         () => "\u00a0"
     );
