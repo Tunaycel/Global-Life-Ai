@@ -24,7 +24,7 @@ const tabs = [
             { icon: FileCheck, title: "Document Intelligence", desc: "AI-powered document review that catches errors before submission" },
             { icon: Map, title: "Personal Roadmap", desc: "Step-by-step immigration timeline customized to your destination and visa type" },
             { icon: Shield, title: "24/7 AI Consultant", desc: "Expert-level immigration guidance available anytime, in any language" },
-            { icon: BookOpen, title: "Country Insights", desc: "Comprehensive guides covering requirements, costs, and opportunities for 35+ countries" },
+            { icon: BookOpen, title: "Country Insights", desc: "Guides on the requirements, costs and opportunities of your destination country" },
         ],
     },
 ];

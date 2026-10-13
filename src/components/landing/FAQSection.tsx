@@ -7,11 +7,11 @@ import { ChevronDown, HelpCircle } from "lucide-react";
 const faqs = [
     {
         q: "How does AI language tutoring work?",
-        a: "Our AI tutors use GPT-4 to conduct real-time conversations at your level. They provide instant pronunciation feedback, grammar corrections, and adaptive lesson plans that evolve with your progress. Think of it as having a personal language teacher available 24/7.",
+        a: "Our AI tutors hold real-time conversations at your level. They give pronunciation feedback, grammar corrections and lesson plans that change as you progress. Think of it as having a personal language teacher available 24/7.",
     },
     {
         q: "Can I really replace a human visa consultant?",
-        a: "Our AI consultant is trained on the latest immigration laws and procedures for 35+ countries. While it handles research, document preparation, and process guidance exceptionally well, we recommend consulting a licensed attorney for complex legal matters.",
+        a: "Our AI consultant helps with research, document preparation and process guidance for the country you choose. For complex legal matters, we recommend consulting a licensed attorney.",
     },
     {
         q: "What languages are supported?",
@@ -19,15 +19,11 @@ const faqs = [
     },
     {
         q: "Is my personal data secure?",
-        a: "Absolutely. We use enterprise-grade AES-256 encryption for all data at rest and TLS 1.3 for data in transit. Immigration documents are stored in an encrypted vault. We are SOC2 Type II compliant and GDPR compliant.",
-    },
-    {
-        q: "Can I switch between plans anytime?",
-        a: "Yes. You can upgrade, downgrade, or cancel your subscription at any time. If you upgrade mid-cycle, you'll only pay the prorated difference. Downgrades take effect at the next billing cycle.",
+        a: "Sign-in is handled by Supabase Auth. Our privacy policy will explain what we store and how we use it.",
     },
     {
         q: "How accurate is the IELTS score prediction?",
-        a: "Our AI scoring model has a 95% accuracy rate within ±0.5 band score compared to actual IELTS results, based on data from thousands of users. The more you practice, the more accurate the predictions become.",
+        a: "The score is an estimate from our AI model, not an official IELTS result. Use it to follow your progress between practice sessions.",
     },
 ];
 

@@ -2,12 +2,12 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, Paperclip, Mic, Phone, Video, MoreVertical, Bot, Sparkles } from "lucide-react";
+import { Send, Paperclip, Mic, Phone, Video, MoreVertical, Bot, Sparkles, FileText, MapIcon, Calculator, CalendarDays, ListChecks } from "lucide-react";
 
 const initialMessages = [
     {
         role: "ai",
-        text: "Merhaba! 🌍 Ben GlobalLife AI vize danışmanınızım. Size nasıl yardımcı olabilirim?",
+        text: "Merhaba! Ben GlobalLife AI vize danışmanınızım. Size nasıl yardımcı olabilirim?",
         time: "14:30",
     },
     {
@@ -32,7 +32,7 @@ const initialMessages = [
     },
     {
         role: "ai",
-        text: "Bloke hesap açmak genelde **1-3 iş günü** sürer. En popüler seçenekler:\n\n🏦 **Expatrio** (En hızlı — Online, 1-2 gün)\n• Online başvuru, Türk kartı ile ödeme\n• Aylık ücret: 5€\n• Hız: ⚡⚡⚡⚡⚡\n\n🏦 **Fintiba** (Güvenilir — Online, 2-3 gün)\n• Benzer süreç, biraz daha yavaş\n• Aylık ücret: 4.90€\n\n🏦 **Deutsche Bank** (Geleneksel — 1-2 hafta)\n• Şube gerekli, daha yavaş\n\n**Önerim:** Expatrio ile başlayın. Hızlı ve güvenilir.\n\nİsterseniz başvuru sürecinde adım adım rehberlik edebilirim! 📋",
+        text: "Bloke hesap açmak genelde **1-3 iş günü** sürer. En popüler seçenekler:\n\n**Expatrio** (En hızlı — Online, 1-2 gün)\n• Online başvuru, Türk kartı ile ödeme\n• Aylık ücret: 5€\n\n**Fintiba** (Güvenilir — Online, 2-3 gün)\n• Benzer süreç, biraz daha yavaş\n• Aylık ücret: 4.90€\n\n**Deutsche Bank** (Geleneksel — 1-2 hafta)\n• Şube gerekli, daha yavaş\n\n**Önerim:** Expatrio ile başlayın. Hızlı ve güvenilir.\n\nİsterseniz başvuru sürecinde adım adım rehberlik edebilirim!",
         time: "14:36",
     },
 ];
@@ -59,7 +59,7 @@ export default function VisaChatPage() {
                 ...prev,
                 {
                     role: "ai",
-                    text: "Çok iyi bir soru! Bu konuda size detaylı bilgi vereyim. Öncelikle belirtmem gereken birkaç önemli nokta var... 📝\n\nSorunuzla ilgili en güncel bilgileri araştırıyorum. Lütfen 1-2 saniye bekleyin.",
+                    text: "Çok iyi bir soru! Bu konuda size detaylı bilgi vereyim. Öncelikle belirtmem gereken birkaç önemli nokta var...\n\nSorunuzla ilgili en güncel bilgileri araştırıyorum. Lütfen 1-2 saniye bekleyin.",
                     time: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
                 },
             ]);
@@ -99,17 +99,17 @@ export default function VisaChatPage() {
             {/* Quick Actions */}
             <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
                 {[
-                    { emoji: "📄", text: "Belge Analizi" },
-                    { emoji: "🗺️", text: "Yol Haritası" },
-                    { emoji: "💰", text: "Maliyet Hesapla" },
-                    { emoji: "📅", text: "Randevu Bilgisi" },
-                    { emoji: "✅", text: "Checklist" },
+                    { icon: FileText, text: "Belge Analizi" },
+                    { icon: MapIcon, text: "Yol Haritası" },
+                    { icon: Calculator, text: "Maliyet Hesapla" },
+                    { icon: CalendarDays, text: "Randevu Bilgisi" },
+                    { icon: ListChecks, text: "Checklist" },
                 ].map((action) => (
                     <button
                         key={action.text}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)] border border-[var(--border)] text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors whitespace-nowrap shrink-0"
                     >
-                        {action.emoji} {action.text}
+                        <action.icon className="w-3.5 h-3.5" aria-hidden="true" /> {action.text}
                     </button>
                 ))}
             </div>

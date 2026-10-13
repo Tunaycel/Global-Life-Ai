@@ -12,7 +12,6 @@ interface Message {
 const quickQuestions = [
     "What languages do you support?",
     "How does visa consulting work?",
-    "Tell me about pricing",
     "How does AI tutoring work?",
 ];
 
@@ -20,9 +19,7 @@ const aiResponses: Record<string, string> = {
     "what languages do you support?":
         "We currently support 10 languages: English, German, Polish, French, Spanish, Italian, Portuguese, Japanese, Korean, and Mandarin Chinese. Our AI tutors provide real-time conversation practice, pronunciation feedback, and adaptive lesson plans for each language.",
     "how does visa consulting work?":
-        "Our AI Visa Consultant analyzes your profile against the latest immigration requirements for 35+ countries. It provides personalized roadmaps, document checklists, and step-by-step guidance. For complex cases, we connect you with licensed attorneys.",
-    "tell me about pricing":
-        "We offer three plans: Starter (Free) with 3 AI lessons/week, Professional ($19/mo yearly) with unlimited access and AI visa consulting, and Enterprise ($59/mo) with team management and API access. All plans include a 14-day free trial.",
+        "The visa guide shows a roadmap and a document checklist for the country you want to move to.",
     "how does ai tutoring work?":
         "Our AI tutors use advanced language models to conduct real-time conversations at your proficiency level. They provide instant grammar corrections, pronunciation analysis, vocabulary building, and create personalized study plans that adapt as you improve.",
 };
@@ -34,7 +31,7 @@ function getAIResponse(input: string): string {
             return value;
         }
     }
-    return "Thanks for your question! Our team would love to help. For detailed inquiries, you can reach us at support@globallife.ai or start a free trial to explore the platform yourself. Is there anything specific about our language learning or visa consulting services I can help with?";
+    return "Thanks for your question! Our team would love to help. For detailed inquiries, you can reach us at support@globallife.ai. Is there anything specific about our language learning or visa consulting services I can help with?";
 }
 
 function replyDelay(): number {
@@ -44,7 +41,7 @@ function replyDelay(): number {
 export default function AIChatBot() {
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: "ai", text: "Hi! 👋 I'm GlobalLife AI Assistant. Ask me anything about our language learning or visa consulting services!" },
+        { role: "ai", text: "Hi! I'm GlobalLife AI Assistant. Ask me anything about our language learning or visa consulting services!" },
     ]);
     const [input, setInput] = useState("");
     const [typing, setTyping] = useState(false);

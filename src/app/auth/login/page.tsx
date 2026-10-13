@@ -7,7 +7,7 @@ import { AUTH_ERRORS, supabaseClient, supabaseConfigured } from "@/lib/supabase"
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2, ShieldCheck, Globe, Zap, Mic, Users, Star } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2, ShieldCheck, Globe, Zap, Mic } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const SceneAuthentication = dynamic(
@@ -125,14 +125,6 @@ export default function LoginPage() {
                     transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                     className="relative z-30 flex flex-col items-start justify-center text-left max-w-[600px] w-full"
                 >
-                    <div className="mb-10 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-lg shadow-black/20">
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="w-6 h-6 rounded-full bg-gradient-to-br from-white/20 to-white/5 border border-white/10" />
-                            ))}
-                        </div>
-                        <span className="text-xs font-medium text-white/80 tracking-wide">2.4M+ Global Öğrenci</span>
-                    </div>
 
                     <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-[0.9] tracking-tighter" style={{ fontFamily: "var(--font-display)" }}>
                         Sınırları <br />
@@ -144,7 +136,7 @@ export default function LoginPage() {
                     </p>
 
                     {/* Detailed Features Grid */}
-                    <div className="grid grid-cols-2 gap-4 w-full mb-12">
+                    <div className="grid grid-cols-2 gap-4 w-full">
                         {[
                             {
                                 icon: Mic,
@@ -153,13 +145,13 @@ export default function LoginPage() {
                             },
                             {
                                 icon: ShieldCheck,
-                                title: "Vize Garantisi",
-                                desc: "%98 başarı oranı ile analiz."
+                                title: "Vize Rehberi",
+                                desc: "Belge listesi ve adım adım yol haritası."
                             },
                             {
                                 icon: Globe,
-                                title: "Global Network",
-                                desc: "150+ ülkede iş fırsatları."
+                                title: "Dört Dil",
+                                desc: "Türkçe, English, Deutsch ve Polski arayüz."
                             },
                             {
                                 icon: Zap,
@@ -185,18 +177,6 @@ export default function LoginPage() {
                         ))}
                     </div>
 
-                    {/* Trust Indicators */}
-                    <div className="flex items-center gap-6 opacity-60">
-                        <div className="flex items-center gap-2">
-                            <Star className="w-4 h-4 text-[#00DC82] fill-[#00DC82]" />
-                            <span className="text-sm font-medium text-white">4.9/5 Trustpilot</span>
-                        </div>
-                        <div className="w-px h-4 bg-white/20" />
-                        <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-[#00E5FF]" />
-                            <span className="text-sm font-medium text-white">Topluluk onaylı</span>
-                        </div>
-                    </div>
                 </motion.div>
             </div>
 

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Globe, DollarSign, GraduationCap, Heart, Briefcase, Sun } from "lucide-react";
+import { ArrowRight, Globe, DollarSign, GraduationCap, Heart, Briefcase, Star, Sun } from "lucide-react";
 
 const countries = [
     {
@@ -98,7 +98,7 @@ export default function CountryGuidesPage() {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1 text-xs font-semibold text-[#FF9F0A]">
-                                    ⭐ {country.rating}
+                                    <Star className="w-3.5 h-3.5 fill-current" aria-hidden="true" /> {country.rating}
                                 </div>
                             </div>
 
