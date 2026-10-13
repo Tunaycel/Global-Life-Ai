@@ -58,6 +58,3 @@ export interface Unit {
 }
 
 export const BLANK = "___";
-
-/** Three or more underscores; a sentence must contain exactly one such gap. */
-export const BLANK_PATTERN = /_{3,}/g;
