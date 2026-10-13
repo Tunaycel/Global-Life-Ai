@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useState, useSyncExternalStore, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -26,6 +26,31 @@ const navItems = [
     { icon: MessageCircle, label: "AI Asistan", href: "/dashboard/assistant" },
     { icon: BarChart3, label: "İstatistikler", href: "/dashboard/stats" },
 ];
+
+// This layout is prerendered at build time, so a date in the HTML would be the
+// build date. The server snapshot is empty; the client fills in today's date
+// and updates it at local midnight.
+function subscribeToMidnight(onChange: () => void) {
+    const msUntilMidnight = () => {
+        const now = new Date();
+        const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        return midnight.getTime() - now.getTime() + 1000;
+    };
+    let timer = window.setTimeout(function tick() {
+        onChange();
+        timer = window.setTimeout(tick, msUntilMidnight());
+    }, msUntilMidnight());
+    return () => window.clearTimeout(timer);
+}
+
+function TodayDate() {
+    const today = useSyncExternalStore(
+        subscribeToMidnight,
+        () => new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
+        () => "\u00a0"
+    );
+    return <>{today}</>;
+}
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     const [collapsed, setCollapsed] = useState(false);
@@ -207,7 +232,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                                 Merhaba, {userName.split(" ")[0]}!
                             </h1>
                             <p className="text-xs text-white/30 font-medium mt-0.5">
-                                {new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+                                <TodayDate />
                             </p>
                         </div>
                     </div>
