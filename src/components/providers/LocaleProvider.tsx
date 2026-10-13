@@ -31,7 +31,8 @@ let fallbackLocale: Locale = "tr";
 function readStoredLocale(): Locale {
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
-        return locales.some((l) => l.code === stored) ? (stored as Locale) : fallbackLocale;
+        if (stored === null) return fallbackLocale;
+        return locales.some((l) => l.code === stored) ? (stored as Locale) : "tr";
     } catch {
         return fallbackLocale;
     }
