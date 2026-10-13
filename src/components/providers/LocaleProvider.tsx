@@ -25,9 +25,16 @@ export function useLocale() {
 const STORAGE_KEY = "locale";
 const CHANGE_EVENT = "locale-change";
 
+// Last locale chosen in this tab, used when localStorage is unavailable.
+let fallbackLocale: Locale = "tr";
+
 function readStoredLocale(): Locale {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return locales.some((l) => l.code === stored) ? (stored as Locale) : "tr";
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return locales.some((l) => l.code === stored) ? (stored as Locale) : fallbackLocale;
+    } catch {
+        return fallbackLocale;
+    }
 }
 
 function subscribe(onChange: () => void) {
@@ -43,7 +50,16 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     const locale = useSyncExternalStore<Locale>(subscribe, readStoredLocale, () => "tr");
 
     const setLocale = useCallback((newLocale: Locale) => {
-        localStorage.setItem(STORAGE_KEY, newLocale);
+        fallbackLocale = newLocale;
+        try {
+            localStorage.setItem(STORAGE_KEY, newLocale);
+        } catch (error) {
+            console.warn("Could not save the locale, keeping it for this tab only.", error);
+            // Drop any older stored value so reads fall back to the new locale.
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch { }
+        }
         window.dispatchEvent(new Event(CHANGE_EVENT));
     }, []);
 
