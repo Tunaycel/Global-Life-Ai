@@ -182,6 +182,11 @@ const translations = {
         },
         lessonsAction: { tr: "İlk derse başla", en: "Start your first lesson", de: "Erste Lektion starten", pl: "Rozpocznij pierwszą lekcję" },
     },
+    lesson: {
+        back: { tr: "Geri", en: "Back", de: "Zurück", pl: "Wstecz" },
+        minutes: { tr: "dk", en: "min", de: "Min.", pl: "min" },
+        exercises: { tr: "alıştırma", en: "exercises", de: "Übungen", pl: "ćwiczeń" },
+    },
 } as const;
 
 export type TranslationKey = keyof typeof translations;
