@@ -186,6 +186,10 @@ const translations = {
         back: { tr: "Geri", en: "Back", de: "Zurück", pl: "Wstecz" },
         minutes: { tr: "dk", en: "min", de: "Min.", pl: "min" },
         exercises: { tr: "alıştırma", en: "exercises", de: "Übungen", pl: "ćwiczeń" },
+        progress: { tr: "İlerleme", en: "Progress", de: "Fortschritt", pl: "Postęp" },
+        newWord: { tr: "Yeni kelime", en: "New word", de: "Neues Wort", pl: "Nowe słowo" },
+        showMeaning: { tr: "Anlamını göster", en: "Show the meaning", de: "Bedeutung zeigen", pl: "Pokaż znaczenie" },
+        next: { tr: "Devam", en: "Continue", de: "Weiter", pl: "Dalej" },
     },
 } as const;
 
