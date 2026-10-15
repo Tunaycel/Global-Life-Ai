@@ -190,6 +190,9 @@ const translations = {
         newWord: { tr: "Yeni kelime", en: "New word", de: "Neues Wort", pl: "Nowe słowo" },
         showMeaning: { tr: "Anlamını göster", en: "Show the meaning", de: "Bedeutung zeigen", pl: "Pokaż znaczenie" },
         next: { tr: "Devam", en: "Continue", de: "Weiter", pl: "Dalej" },
+        correct: { tr: "Doğru!", en: "Correct!", de: "Richtig!", pl: "Dobrze!" },
+        wrong: { tr: "Yanlış.", en: "Not quite.", de: "Leider falsch.", pl: "Niestety źle." },
+        correctAnswer: { tr: "Doğru cevap:", en: "Correct answer:", de: "Richtige Antwort:", pl: "Poprawna odpowiedź:" },
     },
 } as const;
 

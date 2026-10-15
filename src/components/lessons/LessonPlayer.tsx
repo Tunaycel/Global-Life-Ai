@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Clock, ListChecks } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import type { Exercise, Lesson, Unit } from "@/lib/lessons/types";
+import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 import VocabularyCard from "./VocabularyCard";
 
 interface Props {
@@ -61,8 +62,11 @@ export default function LessonPlayer({ unit, lesson }: Props) {
             {exercise?.kind === "vocabulary" && (
                 <VocabularyCard key={exercise.id} exercise={exercise} language={unit.language} onNext={next} />
             )}
-            {/* Multiple choice and fill in the blank come in the next steps. */}
-            {exercise && exercise.kind !== "vocabulary" && (
+            {exercise?.kind === "multiple-choice" && (
+                <MultipleChoiceQuestion key={exercise.id} exercise={exercise} language={unit.language} onDone={next} />
+            )}
+            {/* Fill in the blank comes in the next step. */}
+            {exercise?.kind === "fill-blank" && (
                 <button type="button" onClick={next} className="btn-primary !py-2 !px-6 !text-sm">
                     {t("lesson", "next") as string}
                 </button>
