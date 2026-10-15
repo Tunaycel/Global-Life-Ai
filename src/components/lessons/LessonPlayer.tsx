@@ -7,6 +7,7 @@ import { useLocale } from "@/components/providers/LocaleProvider";
 import type { Exercise, Lesson, Unit } from "@/lib/lessons/types";
 import FillBlankQuestion from "./FillBlankQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
+import ScoreScreen from "./ScoreScreen";
 import VocabularyCard from "./VocabularyCard";
 
 interface Props {
@@ -17,9 +18,19 @@ interface Props {
 export default function LessonPlayer({ unit, lesson }: Props) {
     const { t } = useLocale();
     const [index, setIndex] = useState(0);
+    const [correct, setCorrect] = useState(0);
     const total = lesson.exercises.length;
+    const scored = lesson.exercises.filter((e) => e.kind !== "vocabulary").length;
     const exercise: Exercise | undefined = lesson.exercises[index];
     const next = () => setIndex((i) => i + 1);
+    const answer = (isCorrect: boolean) => {
+        if (isCorrect) setCorrect((c) => c + 1);
+        next();
+    };
+    const restart = () => {
+        setIndex(0);
+        setCorrect(0);
+    };
 
     return (
         <div className="max-w-[720px] mx-auto">
@@ -64,11 +75,12 @@ export default function LessonPlayer({ unit, lesson }: Props) {
                 <VocabularyCard key={exercise.id} exercise={exercise} language={unit.language} onNext={next} />
             )}
             {exercise?.kind === "multiple-choice" && (
-                <MultipleChoiceQuestion key={exercise.id} exercise={exercise} language={unit.language} onDone={next} />
+                <MultipleChoiceQuestion key={exercise.id} exercise={exercise} language={unit.language} onDone={answer} />
             )}
             {exercise?.kind === "fill-blank" && (
-                <FillBlankQuestion key={exercise.id} exercise={exercise} language={unit.language} onDone={next} />
+                <FillBlankQuestion key={exercise.id} exercise={exercise} language={unit.language} onDone={answer} />
             )}
+            {!exercise && <ScoreScreen correct={correct} scored={scored} onRestart={restart} />}
         </div>
     );
 }

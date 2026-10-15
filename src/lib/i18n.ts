@@ -196,6 +196,10 @@ const translations = {
         fillBlank: { tr: "Boşluğu doldur", en: "Fill in the blank", de: "Lücke ausfüllen", pl: "Uzupełnij lukę" },
         yourAnswer: { tr: "Cevabın", en: "Your answer", de: "Deine Antwort", pl: "Twoja odpowiedź" },
         check: { tr: "Kontrol et", en: "Check", de: "Prüfen", pl: "Sprawdź" },
+        finished: { tr: "Dersi bitirdin!", en: "Lesson complete!", de: "Lektion geschafft!", pl: "Lekcja ukończona!" },
+        scoreLabel: { tr: "doğru cevap", en: "correct answers", de: "richtige Antworten", pl: "poprawnych odpowiedzi" },
+        restart: { tr: "Tekrar başla", en: "Start again", de: "Noch einmal", pl: "Zacznij od nowa" },
+        backToLanguage: { tr: "Dil sayfasına dön", en: "Back to languages", de: "Zurück zu den Sprachen", pl: "Wróć do języków" },
     },
 } as const;
 
