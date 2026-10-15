@@ -193,6 +193,9 @@ const translations = {
         correct: { tr: "Doğru!", en: "Correct!", de: "Richtig!", pl: "Dobrze!" },
         wrong: { tr: "Yanlış.", en: "Not quite.", de: "Leider falsch.", pl: "Niestety źle." },
         correctAnswer: { tr: "Doğru cevap:", en: "Correct answer:", de: "Richtige Antwort:", pl: "Poprawna odpowiedź:" },
+        fillBlank: { tr: "Boşluğu doldur", en: "Fill in the blank", de: "Lücke ausfüllen", pl: "Uzupełnij lukę" },
+        yourAnswer: { tr: "Cevabın", en: "Your answer", de: "Deine Antwort", pl: "Twoja odpowiedź" },
+        check: { tr: "Kontrol et", en: "Check", de: "Prüfen", pl: "Sprawdź" },
     },
 } as const;
 
