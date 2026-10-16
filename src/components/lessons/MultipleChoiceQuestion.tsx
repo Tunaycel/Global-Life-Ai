@@ -3,17 +3,20 @@
 import { useEffect, useId, useState } from "react";
 import { Check, X } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
-import type { LessonLanguage, MultipleChoiceExercise } from "@/lib/lessons/types";
+import type { MultipleChoiceExercise } from "@/lib/lessons/types";
 import { blockKeyRepeat } from "./keys";
 
 interface Props {
     exercise: MultipleChoiceExercise;
-    language: LessonLanguage;
     onDone: (correct: boolean) => void;
 }
 
-/** Pick one option by click, Enter or its number key; then shows right or wrong. */
-export default function MultipleChoiceQuestion({ exercise, language, onDone }: Props) {
+/**
+ * Pick one option by click, Enter or its number key; then shows right or wrong.
+ * Options carry no `lang`: some are in the learned language, some in the explaining
+ * one, and the content does not say which yet, so they inherit the page language.
+ */
+export default function MultipleChoiceQuestion({ exercise, onDone }: Props) {
     const { t } = useLocale();
     const promptId = useId();
     const [picked, setPicked] = useState<number | null>(null);
@@ -59,7 +62,7 @@ export default function MultipleChoiceQuestion({ exercise, language, onDone }: P
                         <span className="w-6 h-6 shrink-0 rounded-md border border-[var(--border)] text-xs flex items-center justify-center text-[var(--text-secondary)]">
                             {i + 1}
                         </span>
-                        <span lang={language} className="flex-1 text-[var(--text-primary)]">{option}</span>
+                        <span className="flex-1 text-[var(--text-primary)]">{option}</span>
                         {answered && i === exercise.answer && <Check className="w-4 h-4 text-[var(--color-accent)]" aria-hidden="true" />}
                         {answered && i === picked && !correct && <X className="w-4 h-4 text-[var(--color-error)]" aria-hidden="true" />}
                     </button>
@@ -75,7 +78,7 @@ export default function MultipleChoiceQuestion({ exercise, language, onDone }: P
                         {!correct && (
                             <p className="text-sm text-[var(--text-primary)] mt-1">
                                 {t("lesson", "correctAnswer") as string}{" "}
-                                <span lang={language} className="font-semibold">{exercise.options[exercise.answer]}</span>
+                                <span className="font-semibold">{exercise.options[exercise.answer]}</span>
                             </p>
                         )}
                         {exercise.explanation && <p className="text-sm text-[var(--text-secondary)] mt-2">{exercise.explanation}</p>}

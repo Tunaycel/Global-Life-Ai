@@ -76,7 +76,7 @@ export default function LessonPlayer({ unit, lesson }: Props) {
                 <VocabularyCard key={exercise.id} exercise={exercise} language={unit.language} onNext={next} />
             )}
             {exercise?.kind === "multiple-choice" && (
-                <MultipleChoiceQuestion key={exercise.id} exercise={exercise} language={unit.language} onDone={answer} />
+                <MultipleChoiceQuestion key={exercise.id} exercise={exercise} onDone={answer} />
             )}
             {exercise?.kind === "fill-blank" && (
                 <FillBlankQuestion key={exercise.id} exercise={exercise} language={unit.language} onDone={answer} />
