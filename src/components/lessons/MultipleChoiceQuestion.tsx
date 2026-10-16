@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Check, X } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import type { LessonLanguage, MultipleChoiceExercise } from "@/lib/lessons/types";
@@ -15,6 +15,7 @@ interface Props {
 /** Pick one option by click, Enter or its number key; then shows right or wrong. */
 export default function MultipleChoiceQuestion({ exercise, language, onDone }: Props) {
     const { t } = useLocale();
+    const promptId = useId();
     const [picked, setPicked] = useState<number | null>(null);
     const answered = picked !== null;
     const correct = picked === exercise.answer;
@@ -41,9 +42,10 @@ export default function MultipleChoiceQuestion({ exercise, language, onDone }: P
 
     return (
         <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-8">
-            <p className="text-lg font-medium text-[var(--text-primary)] mb-6">{exercise.prompt}</p>
+            <p id={promptId} className="text-lg font-medium text-[var(--text-primary)] mb-6">{exercise.prompt}</p>
 
-            <div className="flex flex-col gap-3">
+            {/* Focus lands on the first option, so the group label makes screen readers read the question first. */}
+            <div role="group" aria-labelledby={promptId} className="flex flex-col gap-3">
                 {exercise.options.map((option, i) => (
                     <button
                         key={i}
