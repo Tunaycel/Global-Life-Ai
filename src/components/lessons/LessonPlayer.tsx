@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Clock, ListChecks } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { tPlural } from "@/lib/i18n";
 import type { Exercise, Lesson, Unit } from "@/lib/lessons/types";
 import FillBlankQuestion from "./FillBlankQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
@@ -16,7 +17,7 @@ interface Props {
 }
 
 export default function LessonPlayer({ unit, lesson }: Props) {
-    const { t } = useLocale();
+    const { t, locale } = useLocale();
     const [index, setIndex] = useState(0);
     const [correct, setCorrect] = useState(0);
     const total = lesson.exercises.length;
@@ -56,7 +57,7 @@ export default function LessonPlayer({ unit, lesson }: Props) {
                 </span>
                 <span className="flex items-center gap-1.5">
                     <ListChecks className="w-3.5 h-3.5" aria-hidden="true" />
-                    {words} {t("lesson", "words") as string} · {scored} {t("lesson", "questions") as string}
+                    {words} {tPlural("lesson", "words", words, locale)} · {scored} {tPlural("lesson", "questions", scored, locale)}
                 </span>
             </div>
 

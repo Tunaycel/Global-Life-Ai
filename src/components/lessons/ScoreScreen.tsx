@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Trophy } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { tPlural } from "@/lib/i18n";
 import { blockKeyRepeat } from "./keys";
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
 }
 
 export default function ScoreScreen({ correct, scored, words, onRestart }: Props) {
-    const { t } = useLocale();
+    const { t, locale } = useLocale();
 
     return (
         <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-8 text-center">
@@ -32,7 +33,7 @@ export default function ScoreScreen({ correct, scored, words, onRestart }: Props
             )}
             {words > 0 && (
                 <p className="text-sm text-[var(--text-secondary)] mt-3">
-                    {words} {t("lesson", "wordsLearned") as string}
+                    {words} {tPlural("lesson", "wordsLearned", words, locale)}
                 </p>
             )}
             <div className="flex flex-wrap justify-center gap-3 mt-8">

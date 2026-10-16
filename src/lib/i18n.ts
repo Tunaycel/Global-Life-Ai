@@ -185,8 +185,14 @@ const translations = {
     lesson: {
         back: { tr: "Geri", en: "Back", de: "Zurück", pl: "Wstecz" },
         minutes: { tr: "dk", en: "min", de: "Min.", pl: "min" },
+        // Counted words use tPlural: the plain key is the "other" form (Polish "many"),
+        // and _one / _few hold the forms that differ for 1 and 2-4.
         words: { tr: "kelime", en: "words", de: "Wörter", pl: "słów" },
+        words_one: { en: "word", de: "Wort", pl: "słowo" },
+        words_few: { pl: "słowa" },
         questions: { tr: "soru", en: "questions", de: "Fragen", pl: "pytań" },
+        questions_one: { en: "question", de: "Frage", pl: "pytanie" },
+        questions_few: { pl: "pytania" },
         progress: { tr: "İlerleme", en: "Progress", de: "Fortschritt", pl: "Postęp" },
         newWord: { tr: "Yeni kelime", en: "New word", de: "Neues Wort", pl: "Nowe słowo" },
         showMeaning: { tr: "Anlamını göster", en: "Show the meaning", de: "Bedeutung zeigen", pl: "Pokaż znaczenie" },
@@ -200,6 +206,8 @@ const translations = {
         finished: { tr: "Dersi bitirdin!", en: "Lesson complete!", de: "Lektion geschafft!", pl: "Lekcja ukończona!" },
         scoreLabel: { tr: "doğru cevap", en: "correct answers", de: "richtige Antworten", pl: "poprawnych odpowiedzi" },
         wordsLearned: { tr: "yeni kelime öğrendin", en: "new words learned", de: "neue Wörter gelernt", pl: "nowych słów poznanych" },
+        wordsLearned_one: { en: "new word learned", de: "neues Wort gelernt", pl: "nowe słowo poznane" },
+        wordsLearned_few: { pl: "nowe słowa poznane" },
         restart: { tr: "Tekrar başla", en: "Start again", de: "Noch einmal", pl: "Zacznij od nowa" },
         backToLanguage: { tr: "Dil sayfasına dön", en: "Back to languages", de: "Zurück zu den Sprachen", pl: "Wróć do języków" },
     },
@@ -215,6 +223,20 @@ export function t(section: string, key: string, locale: Locale): string | string
     const entry = sec[key];
     if (!entry) return key;
     return entry[locale] ?? entry["en"] ?? key;
+}
+
+/**
+ * The form of a counted word, e.g. tPlural("lesson", "words", 2, "pl") → "słowa".
+ * Looks up `key_one` / `key_few` / … for the locale's plural category and falls back
+ * to `key`. Unlike t(), a missing form never borrows English, so Turkish stays "kelime".
+ */
+export function tPlural(section: string, key: string, count: number, locale: Locale): string {
+    const category = new Intl.PluralRules(locale).select(count);
+    const sec = (translations as unknown as Record<string, Record<string, Entry | undefined> | undefined>)[section];
+    const form = sec?.[`${key}_${category}`]?.[locale];
+    if (typeof form === "string") return form;
+    const text = t(section, key, locale);
+    return typeof text === "string" ? text : key;
 }
 
 export default translations;
