@@ -18,21 +18,18 @@ interface Props {
 
 export default function LessonPlayer({ unit, lesson }: Props) {
     const { t, locale } = useLocale();
-    const [index, setIndex] = useState(0);
-    const [correct, setCorrect] = useState(0);
+    const [{ index, correct }, setStep] = useState({ index: 0, correct: 0 });
     const total = lesson.exercises.length;
     const words = lesson.exercises.filter((e) => e.kind === "vocabulary").length;
     const scored = total - words;
     const exercise: Exercise | undefined = lesson.exercises[index];
-    const next = () => setIndex((i) => i + 1);
-    const answer = (isCorrect: boolean) => {
-        if (isCorrect) setCorrect((c) => c + 1);
-        next();
-    };
-    const restart = () => {
-        setIndex(0);
-        setCorrect(0);
-    };
+    // Moves on only from the card that asked, so a double click cannot skip a card
+    // or count one answer twice.
+    const advance = (from: number, isCorrect: boolean) =>
+        setStep((s) => (s.index !== from ? s : { index: s.index + 1, correct: s.correct + (isCorrect ? 1 : 0) }));
+    const next = () => advance(index, false);
+    const answer = (isCorrect: boolean) => advance(index, isCorrect);
+    const restart = () => setStep({ index: 0, correct: 0 });
 
     return (
         <div className="max-w-[720px] mx-auto">
