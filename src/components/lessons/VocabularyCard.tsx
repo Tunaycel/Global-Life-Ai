@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import type { LessonLanguage, VocabularyExercise } from "@/lib/lessons/types";
+import { blockKeyRepeat } from "./keys";
 
 interface Props {
     exercise: VocabularyExercise;
@@ -29,12 +30,12 @@ export default function VocabularyCard({ exercise, language, onNext }: Props) {
                             <p className="text-[var(--text-secondary)]">{exercise.example.translation}</p>
                         </div>
                     )}
-                    <button type="button" onClick={onNext} autoFocus className="btn-primary !py-2 !px-6 !text-sm mt-8">
+                    <button type="button" onClick={onNext} onKeyDown={blockKeyRepeat} autoFocus className="btn-primary !py-2 !px-6 !text-sm mt-8">
                         {t("lesson", "next") as string}
                     </button>
                 </>
             ) : (
-                <button type="button" onClick={() => setRevealed(true)} autoFocus className="btn-primary !py-2 !px-6 !text-sm">
+                <button type="button" onClick={() => setRevealed(true)} onKeyDown={blockKeyRepeat} autoFocus className="btn-primary !py-2 !px-6 !text-sm">
                     {t("lesson", "showMeaning") as string}
                 </button>
             )}

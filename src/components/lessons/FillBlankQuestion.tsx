@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { BLANK, type FillBlankExercise, type LessonLanguage } from "@/lib/lessons/types";
 import { isFillBlankCorrect } from "@/lib/lessons/validate";
+import { blockKeyRepeat } from "./keys";
 
 interface Props {
     exercise: FillBlankExercise;
@@ -81,7 +82,7 @@ export default function FillBlankQuestion({ exercise, language, onDone }: Props)
             </div>
 
             {checked && (
-                <button type="button" onClick={() => onDone(correct)} autoFocus className="btn-primary !py-2 !px-6 !text-sm mt-6">
+                <button type="button" onClick={() => onDone(correct)} onKeyDown={blockKeyRepeat} autoFocus className="btn-primary !py-2 !px-6 !text-sm mt-6">
                     {t("lesson", "next") as string}
                 </button>
             )}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Trophy } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { blockKeyRepeat } from "./keys";
 
 interface Props {
     correct: number;
@@ -35,7 +36,7 @@ export default function ScoreScreen({ correct, scored, words, onRestart }: Props
                 </p>
             )}
             <div className="flex flex-wrap justify-center gap-3 mt-8">
-                <button type="button" onClick={onRestart} autoFocus className="btn-primary !py-2 !px-6 !text-sm">
+                <button type="button" onClick={onRestart} onKeyDown={blockKeyRepeat} autoFocus className="btn-primary !py-2 !px-6 !text-sm">
                     {t("lesson", "restart") as string}
                 </button>
                 <Link href="/dashboard/language" className="btn-ghost !py-2 !px-6 !text-sm">

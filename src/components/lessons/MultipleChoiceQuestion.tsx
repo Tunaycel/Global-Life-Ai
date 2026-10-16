@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Check, X } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import type { LessonLanguage, MultipleChoiceExercise } from "@/lib/lessons/types";
+import { blockKeyRepeat } from "./keys";
 
 interface Props {
     exercise: MultipleChoiceExercise;
@@ -21,7 +22,9 @@ export default function MultipleChoiceQuestion({ exercise, language, onDone }: P
     useEffect(() => {
         if (answered) return;
         const onKey = (e: KeyboardEvent) => {
-            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            if (e.repeat || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+            // Digits typed into a text field are text, not an answer.
+            if (e.target instanceof Element && e.target.closest("input, textarea, select, [contenteditable]")) return;
             const n = Number(e.key);
             if (Number.isInteger(n) && n >= 1 && n <= exercise.options.length) setPicked(n - 1);
         };
@@ -46,6 +49,7 @@ export default function MultipleChoiceQuestion({ exercise, language, onDone }: P
                         key={i}
                         type="button"
                         onClick={() => setPicked(i)}
+                        onKeyDown={blockKeyRepeat}
                         disabled={answered}
                         autoFocus={i === 0}
                         className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors ${optionStyle(i)}`}
@@ -78,7 +82,7 @@ export default function MultipleChoiceQuestion({ exercise, language, onDone }: P
             </div>
 
             {answered && (
-                <button type="button" onClick={() => onDone(correct)} autoFocus className="btn-primary !py-2 !px-6 !text-sm mt-6">
+                <button type="button" onClick={() => onDone(correct)} onKeyDown={blockKeyRepeat} autoFocus className="btn-primary !py-2 !px-6 !text-sm mt-6">
                     {t("lesson", "next") as string}
                 </button>
             )}
