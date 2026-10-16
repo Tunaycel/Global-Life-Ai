@@ -8,10 +8,12 @@ interface Props {
     correct: number;
     /** Questions that count; vocabulary cards are not scored. */
     scored: number;
+    /** Vocabulary cards seen in the lesson. */
+    words: number;
     onRestart: () => void;
 }
 
-export default function ScoreScreen({ correct, scored, onRestart }: Props) {
+export default function ScoreScreen({ correct, scored, words, onRestart }: Props) {
     const { t } = useLocale();
 
     return (
@@ -25,6 +27,11 @@ export default function ScoreScreen({ correct, scored, onRestart }: Props) {
                     </span>
                     <br />
                     {t("lesson", "scoreLabel") as string}
+                </p>
+            )}
+            {words > 0 && (
+                <p className="text-sm text-[var(--text-secondary)] mt-3">
+                    {words} {t("lesson", "wordsLearned") as string}
                 </p>
             )}
             <div className="flex flex-wrap justify-center gap-3 mt-8">

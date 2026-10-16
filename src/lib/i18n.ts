@@ -185,7 +185,8 @@ const translations = {
     lesson: {
         back: { tr: "Geri", en: "Back", de: "Zurück", pl: "Wstecz" },
         minutes: { tr: "dk", en: "min", de: "Min.", pl: "min" },
-        exercises: { tr: "alıştırma", en: "exercises", de: "Übungen", pl: "ćwiczeń" },
+        words: { tr: "kelime", en: "words", de: "Wörter", pl: "słów" },
+        questions: { tr: "soru", en: "questions", de: "Fragen", pl: "pytań" },
         progress: { tr: "İlerleme", en: "Progress", de: "Fortschritt", pl: "Postęp" },
         newWord: { tr: "Yeni kelime", en: "New word", de: "Neues Wort", pl: "Nowe słowo" },
         showMeaning: { tr: "Anlamını göster", en: "Show the meaning", de: "Bedeutung zeigen", pl: "Pokaż znaczenie" },
@@ -198,6 +199,7 @@ const translations = {
         check: { tr: "Kontrol et", en: "Check", de: "Prüfen", pl: "Sprawdź" },
         finished: { tr: "Dersi bitirdin!", en: "Lesson complete!", de: "Lektion geschafft!", pl: "Lekcja ukończona!" },
         scoreLabel: { tr: "doğru cevap", en: "correct answers", de: "richtige Antworten", pl: "poprawnych odpowiedzi" },
+        wordsLearned: { tr: "yeni kelime öğrendin", en: "new words learned", de: "neue Wörter gelernt", pl: "nowych słów poznanych" },
         restart: { tr: "Tekrar başla", en: "Start again", de: "Noch einmal", pl: "Zacznij od nowa" },
         backToLanguage: { tr: "Dil sayfasına dön", en: "Back to languages", de: "Zurück zu den Sprachen", pl: "Wróć do języków" },
     },

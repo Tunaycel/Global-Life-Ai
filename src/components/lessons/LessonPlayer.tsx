@@ -20,7 +20,8 @@ export default function LessonPlayer({ unit, lesson }: Props) {
     const [index, setIndex] = useState(0);
     const [correct, setCorrect] = useState(0);
     const total = lesson.exercises.length;
-    const scored = lesson.exercises.filter((e) => e.kind !== "vocabulary").length;
+    const words = lesson.exercises.filter((e) => e.kind === "vocabulary").length;
+    const scored = total - words;
     const exercise: Exercise | undefined = lesson.exercises[index];
     const next = () => setIndex((i) => i + 1);
     const answer = (isCorrect: boolean) => {
@@ -55,7 +56,7 @@ export default function LessonPlayer({ unit, lesson }: Props) {
                 </span>
                 <span className="flex items-center gap-1.5">
                     <ListChecks className="w-3.5 h-3.5" aria-hidden="true" />
-                    {total} {t("lesson", "exercises") as string}
+                    {words} {t("lesson", "words") as string} · {scored} {t("lesson", "questions") as string}
                 </span>
             </div>
 
@@ -80,7 +81,7 @@ export default function LessonPlayer({ unit, lesson }: Props) {
             {exercise?.kind === "fill-blank" && (
                 <FillBlankQuestion key={exercise.id} exercise={exercise} language={unit.language} onDone={answer} />
             )}
-            {!exercise && <ScoreScreen correct={correct} scored={scored} onRestart={restart} />}
+            {!exercise && <ScoreScreen correct={correct} scored={scored} words={words} onRestart={restart} />}
         </div>
     );
 }
